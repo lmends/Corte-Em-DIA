@@ -5,10 +5,19 @@
   <title>Agenda Semanal - Corte em Dia</title>
   <style>
     body {margin:0; display:flex; font-family: Arial, sans-serif;}
-    .content {margin-left:240px; padding:20px; flex:1; height:100vh; overflow-y:auto; background:#f5f5f5;}
-    table {width:100%; border-collapse:collapse; background:#fff;}
-    th, td {padding:8px; border:1px solid #ccc; text-align:left;}
+    .content {margin-left:240px; padding:20px; flex:1; height:100vh; overflow-x:auto; background:#f5f5f5;}
+    .semana-container {display:flex; gap:10px; align-items:flex-start;}
+    .dia-container {flex:1; min-width:120px; background:#eee; padding:10px; border-radius:6px;}
+    table {border-collapse:collapse; background:#fff; width:100%; font-size:12px;}
+    th, td {padding:4px; border:1px solid #ccc; text-align:left;}
     th {background:#222; color:#fff;}
+    .profissional-header {background:#555; color:#fff; font-weight:bold; text-align:center;}
+    .filtros {margin-bottom:20px;}
+    .filtros label {font-weight:bold; margin-right:10px;}
+    .filtros select {padding:4px;}
+    .filtros button {padding:5px 10px; margin-left:10px; cursor:pointer;}
+    .nav-semana {margin-bottom:15px;}
+    .nav-semana button {padding:5px 10px; margin-right:5px; cursor:pointer;}
   </style>
 </head>
 <body>
@@ -16,58 +25,95 @@
   <!-- Sidebar -->
   <div id="sidebarContainer"></div>
 
-  <!-- Conteúdo principal -->
   <div class="content">
-    <h1>Agenda Semanal</h1>
-    <table id="agendaTable">
-      <thead>
-        <tr>
-          <th>Profissional</th>
-          <th>Cliente</th>
-          <th>Serviço</th>
-          <th>Data</th>
-          <th>Hora</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <h1>Agenda Semanal - Profissional</h1>
+
+    <!-- Filtro de Profissional -->
+    <div class="filtros">
+      <label for="profissionalFiltro">Profissional:</label>
+      <select id="profissionalFiltro"></select>
+      <button id="filtrarBtn">Filtrar</button>
+    </div>
+
+    <!-- Navegação de semanas -->
+    <div class="nav-semana">
+      <button id="prevSemanaBtn">&lt; Semana Anterior</button>
+      <button id="nextSemanaBtn">Próxima Semana &gt;</button>
+    </div>
+
+    <!-- Container da agenda -->
+    <div id="agendaContainer" class="semana-container"></div>
   </div>
 
-  <!-- Scripts -->
-  <script src="agendaUtils.js"></script>
+  <script src="agendasemanalUtils.js"></script>
   <script>
+    let semanaOffset = 0;
+
     // Carrega sidebar
     fetch('sidebar.html')
       .then(res => res.text())
       .then(html => { document.getElementById('sidebarContainer').innerHTML = html; });
 
-    // Exibe agenda semanal
-    const hoje = new Date();
-    const semanaFim = new Date();
-    semanaFim.setDate(hoje.getDate() + 6); // 7 dias no total
+    // Renderiza agenda semanal
+    async function atualizarAgendaSemanalProfissional() {
+      const container = document.getElementById('agendaContainer');
+      container.innerHTML = '';
 
-    obterAgenda('semanal', null, hoje).then(eventos => {
-      // Filtra manualmente os eventos da semana
-      const eventosSemana = eventos.filter(e => {
-        const dataEvento = new Date(e.data);
-        return dataEvento >= hoje && dataEvento <= semanaFim;
-      });
+      const profSelecionado = document.getElementById('profissionalFiltro').value;
+      const agenda = await obterAgendaSemanal(profSelecionado);
 
-      const tbody = document.querySelector('#agendaTable tbody');
-      tbody.innerHTML = ''; // limpa tabela
-      eventosSemana.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${item.profissional}</td>
-          <td>${item.cliente}</td>
-          <td>${item.servico}</td>
-          <td>${item.data}</td>
-          <td>${item.hora}</td>
-        `;
-        tbody.appendChild(tr);
+      agenda.forEach(prof => {
+        prof.dias.forEach(dia => {
+          const diaDiv = document.createElement('div');
+          diaDiv.classList.add('dia-container');
+
+          const tabela = document.createElement('table');
+          tabela.innerHTML = `
+            <thead>
+              <tr class="profissional-header"><th colspan="3">${prof.profissional} - ${dia.data}</th></tr>
+              <tr>
+                <th>Hora</th>
+                <th>Cliente</th>
+                <th>Procedimento</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${dia.horarios.map(h => `
+                <tr>
+                  <td>${h.hora}</td>
+                  <td>${h.cliente}</td>
+                  <td>${h.servico}</td>
+                </tr>`).join('')}
+            </tbody>
+          `;
+          diaDiv.appendChild(tabela);
+          container.appendChild(diaDiv);
+        });
       });
-    }).catch(err => console.error('Erro ao carregar agenda semanal:', err));
+    }
+
+    // Popula dropdown
+    async function carregarProfissionais(){
+      const usuarios = await fetch('dados/usuario.json').then(res => res.json());
+      const select = document.getElementById('profissionalFiltro');
+      usuarios.forEach(u => {
+        const option = document.createElement('option');
+        option.value = u.id;
+        option.textContent = u.nome;
+        select.appendChild(option);
+      });
+    }
+
+    // Eventos
+    document.getElementById('filtrarBtn').addEventListener('click', () => atualizarAgendaSemanalProfissional());
+    document.getElementById('prevSemanaBtn').addEventListener('click', () => { semanaOffset--; atualizarAgendaSemanalProfissional(); });
+    document.getElementById('nextSemanaBtn').addEventListener('click', () => { semanaOffset++; atualizarAgendaSemanalProfissional(); });
+
+    // Inicializa
+    carregarProfissionais().then(() => {
+      document.getElementById('profissionalFiltro').selectedIndex = 0;
+      atualizarAgendaSemanalProfissional();
+    });
   </script>
-
 </body>
 </html>
