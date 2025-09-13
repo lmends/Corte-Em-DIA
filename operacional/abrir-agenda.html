@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Abrir Agenda - Corte em Dia</title>
+  <style>
+    body { margin:0; display:flex; height:100vh; font-family: Arial, sans-serif; }
+    iframe { border:none; height:100vh; }
+    .content { flex:1; padding:20px; overflow-y:auto; background:#f5f5f5; }
+    label{display:block;margin-top:10px;}
+    input,select,button{padding:6px;margin-top:5px;}
+    .agenda-aberta{border:1px solid #ccc;padding:8px;margin-top:10px;border-radius:4px;background:#fff;}
+  </style>
+</head>
+<body>
+
+  <div id="sidebarContainer"></div>
+
+    <script>
+    fetch('sidebar.html')
+        .then(res => res.text())
+        .then(html => {
+        document.getElementById('sidebarContainer').innerHTML = html;
+        });
+    </script>
+
+  <div class="content">
+    <h1>Abrir Agenda</h1>
+
+    <label for="profissional">Profissional</label>
+    <select id="profissional">
+      <option value="João">João</option>
+      <option value="Maria">Maria</option>
+    </select>
+
+    <label for="data">Data</label>
+    <input type="date" id="data">
+
+    <label for="horaInicio">Hora de início</label>
+    <input type="time" id="horaInicio">
+
+    <label for="horaFim">Hora de fim</label>
+    <input type="time" id="horaFim">
+
+    <button onclick="abrirAgenda()">Abrir Agenda</button>
+
+    <h2>Agendas já abertas</h2>
+    <div id="listaAgendas"></div>
+  </div>
+
+  <script>
+    const usuarioLogado = JSON.parse(sessionStorage.getItem("usuarioLogado"));
+    if(!usuarioLogado){
+      alert("Você precisa fazer login!");
+      window.location.href = "../index.html";
+    }
+
+    const agendasAbertas = [];
+
+    function abrirAgenda() {
+      const profissional = document.getElementById("profissional").value;
+      const data = document.getElementById("data").value;
+      const horaInicio = document.getElementById("horaInicio").value;
+      const horaFim = document.getElementById("horaFim").value;
+
+      if (!profissional || !data || !horaInicio || !horaFim) {
+        alert("Preencha todos os campos!");
+        return;
+      }
+
+      const novaAgenda = {profissional,data,horaInicio,horaFim};
+      agendasAbertas.push(novaAgenda);
+      atualizarLista();
+    }
+
+    function atualizarLista() {
+      const lista = document.getElementById("listaAgendas");
+      lista.innerHTML = "";
+      agendasAbertas.forEach(a=>{
+        lista.innerHTML += `<div class="agenda-aberta"><strong>${a.profissional}</strong> | ${a.data} | ${a.horaInicio} às ${a.horaFim}</div>`;
+      });
+    }
+  </script>
+
+</body>
+</html>

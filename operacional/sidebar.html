@@ -1,0 +1,69 @@
+<style>
+  html, body { margin:0; padding:0; height:100%; }
+.sidebar {
+  width:240px;
+  background:#1f1f1f;
+  color:#fff;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  height:100vh; /* Faz a sidebar ocupar toda a altura da tela */
+  box-sizing:border-box;
+  position:fixed; /* Mantém fixo enquanto o conteúdo rola */
+  top:0;
+  left:0;
+}
+
+.sidebar h2 {
+  text-align:center;
+  margin-bottom:20px;
+  font-size:1.5em;
+  color:#ffcc00;
+}
+
+.sidebar ul { list-style:none; padding:0; }
+
+.sidebar li {
+  padding:10px 15px;
+  margin-bottom:8px;
+  border-radius:6px;
+  cursor:pointer;
+  transition: background 0.2s;
+}
+
+.sidebar li:hover { background:#333; }
+
+.sidebar li ul li {
+  padding-left:25px;
+  font-size:0.95em;
+}
+</style>
+
+<div class="sidebar">
+  <h2>Corte em Dia</h2>
+  <ul>
+    <li onclick="window.location.href='painel.html'">Dashboard</li>
+    <li>
+      Agenda
+      <ul>
+        <li onclick="window.location.href='diaria.html'">Diária</li>
+        <li onclick="window.location.href='semanal.html'">Semanal</li>
+        <li onclick="window.location.href='multipla.html'">Múltipla</li>
+        <li onclick="window.location.href='mensal.html'">Mensal</li>
+        <li onclick="window.location.href='abrir-agenda.html'">Abrir Agenda</li>
+      </ul>
+    </li>
+    <li onclick="window.location.href='clientes.html'">Clientes</li>
+    <li onclick="window.location.href='profissionais.html'">Profissionais</li>
+    <li onclick="window.location.href='relatorios.html'">Relatórios</li>
+    <li onclick="logout()">Sair</li>
+  </ul>
+</div>
+
+<script>
+function logout() {
+  sessionStorage.removeItem("usuarioLogado");
+  window.location.href = "index.html";
+}
+</script>

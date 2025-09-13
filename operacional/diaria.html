@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Agenda Diária - Corte em Dia</title>
+  <style>
+    body {margin:0; display:flex; font-family: Arial, sans-serif;}
+    .content {margin-left:240px; padding:20px; flex:1; height:100vh; overflow-y:auto; background:#f5f5f5;}
+    table {width:100%; border-collapse:collapse; background:#fff;}
+    th, td {padding:8px; border:1px solid #ccc; text-align:left;}
+    th {background:#222; color:#fff;}
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div id="sidebarContainer"></div>
+
+  <!-- Conteúdo principal -->
+  <div class="content">
+    <h1>Agenda Diária</h1>
+    <table id="agendaTable">
+      <thead>
+        <tr>
+          <th>Profissional</th>
+          <th>Cliente</th>
+          <th>Serviço</th>
+          <th>Data</th>
+          <th>Hora</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Scripts -->
+  <script src="agendaUtils.js"></script>
+  <script>
+    // Carrega sidebar
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(html => { document.getElementById('sidebarContainer').innerHTML = html; });
+
+    // Exibe agenda diária
+    const hoje = new Date('2025-09-14');
+    obterAgenda('diaria', null, hoje).then(eventos => {
+      const tbody = document.querySelector('#agendaTable tbody');
+      tbody.innerHTML = ''; // limpa tabela
+      eventos.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.profissional}</td>
+          <td>${item.cliente}</td>
+          <td>${item.servico}</td>
+          <td>${item.data}</td>
+          <td>${item.hora}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }).catch(err => console.error('Erro ao carregar agenda:', err));
+  </script>
+
+</body>
+</html>

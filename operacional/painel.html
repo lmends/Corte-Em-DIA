@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel - Corte em Dia</title>
+</head>
+<body>
+    <style>
+        body{margin:0; display:flex; font-family:Arial,sans-serif;}
+        .content{margin-left:240px; padding:20px; flex:1; height:100vh; overflow-y:auto; background:#f5f5f5;}
+    </style>
+
+  <div id="sidebarContainer"></div>
+
+  <div class="content">
+    <h1>Painel de Operações</h1>
+    <p>Bem-vindo ao sistema Corte em Dia.</p>
+    <p>Aqui você terá acesso às agendas, clientes, profissionais e relatórios.</p>
+  </div>
+
+  <script>
+    // Carregar sidebar
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('sidebarContainer').innerHTML = html;
+      });
+
+    // Checar login (mock)
+    const usuarioLogado = JSON.parse(sessionStorage.getItem("usuarioLogado") || '{}');
+    if(!usuarioLogado.nome){
+      console.log("Usuário não logado - mock login automático");
+      sessionStorage.setItem("usuarioLogado", JSON.stringify({nome:"Admin"}));
+    }
+  </script>
+
+</body>
+</html>

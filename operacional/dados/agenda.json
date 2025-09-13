@@ -1,0 +1,6 @@
+[
+  {"id":"a1","clienteId":"c1","profissionalId":"u1","servico":"Corte","data":"2025-09-14","hora":"09:00"},
+  {"id":"a2","clienteId":"c2","profissionalId":"u2","servico":"Barba","data":"2025-09-14","hora":"10:30"},
+  {"id":"a3","clienteId":"c3","profissionalId":"u1","servico":"Pigmentação","data":"2025-09-15","hora":"11:00"},
+  {"id":"a4","clienteId":"c4","profissionalId":"u2","servico":"Corte","data":"2025-09-15","hora":"14:00"}
+]

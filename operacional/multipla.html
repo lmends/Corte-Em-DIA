@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Agenda Múltipla - Corte em Dia</title>
+  <style>
+    body {margin:0; display:flex; font-family: Arial, sans-serif;}
+    .content {margin-left:240px; padding:20px; flex:1; height:100vh; overflow-y:auto; background:#f5f5f5;}
+    .profissionais-container {display:flex; gap:20px; flex-wrap: wrap;}
+    table {border-collapse:collapse; background:#fff; width:300px; min-width:250px;}
+    th, td {padding:6px; border:1px solid #ccc; text-align:left; font-size:14px;}
+    th {background:#222; color:#fff;}
+    .profissional-header {background:#555; color:#fff; font-weight:bold; text-align:center;}
+    .filtros {margin-bottom: 15px;}
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div id="sidebarContainer"></div>
+
+  <!-- Conteúdo principal -->
+  <div class="content">
+    <h1>Agenda Múltipla</h1>
+
+    <!-- Filtro de data -->
+    <div class="filtros">
+      <label>Data: <input type="date" id="dataEscolhida"></label>
+      <button id="filtrarBtn">Filtrar</button>
+    </div>
+
+    <div class="profissionais-container" id="agendaContainer"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="agendaUtils.js"></script>
+  <script>
+    // Carrega sidebar
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(html => { document.getElementById('sidebarContainer').innerHTML = html; });
+
+    async function atualizarAgendaMultipla() {
+      const dataSelecionada = new Date(document.getElementById('dataEscolhida').value);
+      if (isNaN(dataSelecionada)) return;
+
+      const eventos = await obterAgenda('multipla');
+
+      // Filtra eventos pelo dia escolhido
+      const eventosFiltrados = eventos.filter(e => e.data === dataSelecionada.toISOString().slice(0,10));
+
+      // Agrupa eventos por profissional
+      const grupos = {};
+      eventosFiltrados.forEach(e => {
+        if (!grupos[e.profissional]) grupos[e.profissional] = [];
+        grupos[e.profissional].push(e);
+      });
+
+      const container = document.getElementById('agendaContainer');
+      container.innerHTML = '';
+
+      for (const prof in grupos) {
+        const tabela = document.createElement('table');
+        tabela.innerHTML = `
+          <thead>
+            <tr class="profissional-header">
+              <th colspan="4">${prof}</th>
+            </tr>
+            <tr>
+              <th>Hora</th>
+              <th>Cliente</th>
+              <th>Procedimento</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${grupos[prof].map(e => `
+              <tr>
+                <td>${e.hora}</td>
+                <td>${e.cliente}</td>
+                <td>${e.servico}</td>
+                <td>${e.valor || '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        `;
+        container.appendChild(tabela);
+      }
+    }
+
+    document.getElementById('filtrarBtn').addEventListener('click', atualizarAgendaMultipla);
+
+    // Inicializa com o dia de hoje
+    const hojeStr = new Date().toISOString().slice(0,10);
+    document.getElementById('dataEscolhida').value = hojeStr;
+    atualizarAgendaMultipla();
+  </script>
+
+</body>
+</html>

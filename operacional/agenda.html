@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Corte em Dia - Agenda</title>
+  <style>
+    body {
+      display: flex;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: #222;
+      color: #fff;
+      padding: 20px;
+      height: 100vh;
+    }
+    .sidebar h2 { margin-top: 0; font-size: 18px; }
+    .sidebar a {
+      display: block;
+      padding: 10px;
+      color: #ddd;
+      text-decoration: none;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+    .sidebar a:hover { background: #444; }
+
+    .submenu {
+      margin-left: 15px;
+      display: none;
+    }
+    .submenu a { font-size: 14px; }
+
+    /* Main */
+    .main { flex: 1; padding: 20px; }
+    .agenda { border-collapse: collapse; width: 100%; }
+    .agenda th, .agenda td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    .agenda th { background: #f4f4f4; }
+    .livre { background: #e0ffe0; cursor: pointer; }
+    .ocupado { background: #ffc0c0; }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Corte em Dia</h2>
+    <a id="menuAgenda">Agenda</a>
+    <div id="submenuAgenda" class="submenu">
+      <a onclick="carregarAgenda('diaria')">📅 Diária</a>
+      <a onclick="carregarAgenda('semanal')">📅 Semanal</a>
+      <a onclick="carregarAgenda('mensal')">📅 Mensal</a>
+      <a onclick="carregarAgenda('multipla')">👥 Múltiplos profissionais</a>
+    </div>
+    <a href="#">Clientes</a>
+    <a href="#">Profissionais</a>
+    <a href="#">Relatórios</a>
+  </div>
+
+  <div class="main">
+    <h1 id="tituloAgenda">Agenda</h1>
+    <table class="agenda" id="agendaTable">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Horário</th>
+          <th>Profissional</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    let agendaData = [];
+
+    // Abrir/fechar submenu
+    document.getElementById("menuAgenda").addEventListener("click", () => {
+      const sub = document.getElementById("submenuAgenda");
+      sub.style.display = sub.style.display === "block" ? "none" : "block";
+    });
+
+    // Carregar JSON mock
+    async function loadData() {
+      const response = await fetch("data/agenda.json");
+      agendaData = await response.json();
+      carregarAgenda("diaria"); // carrega default
+    }
+
+    function carregarAgenda(view) {
+      const tbody = document.querySelector("#agendaTable tbody");
+      const titulo = document.getElementById("tituloAgenda");
+      tbody.innerHTML = "";
+
+      let agendaFiltrada = [];
+
+      if (view === "diaria") {
+        const hoje = new Date().toISOString().split("T")[0];
+        titulo.innerText = "Agenda Diária (" + hoje + ")";
+        agendaFiltrada = agendaData.agenda.filter(a => a.data === hoje);
+      }
+
+      else if (view === "semanal") {
+        titulo.innerText = "Agenda Semanal";
+        // pega os próximos 7 dias
+        const hoje = new Date();
+        const fim = new Date();
+        fim.setDate(hoje.getDate() + 7);
+        agendaFiltrada = agendaData.agenda.filter(a => {
+          const d = new Date(a.data);
+          return d >= hoje && d <= fim;
+        });
+      }
+
+      else if (view === "mensal") {
+        titulo.innerText = "Agenda Mensal";
+        const mesAtual = new Date().getMonth();
+        const anoAtual = new Date().getFullYear();
+        agendaFiltrada = agendaData.agenda.filter(a => {
+          const d = new Date(a.data);
+          return d.getMonth() === mesAtual && d.getFullYear() === anoAtual;
+        });
+      }
+
+      else if (view === "multipla") {
+        titulo.innerText = "Agenda Múltiplos Profissionais";
+        agendaFiltrada = agendaData.agenda; // exibe tudo
+      }
+
+      agendaFiltrada.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.data}</td>
+          <td>${item.horario}</td>
+          <td>${item.profissional}</td>
+          <td class="${item.cliente ? 'ocupado' : 'livre'}">
+            ${item.cliente ? "Agendado: " + item.cliente : "Disponível"}
+          </td>
+        `;
+
+        if (!item.cliente) {
+          tr.querySelector("td:last-child").addEventListener("click", () => {
+            const nome = prompt("Nome do cliente:");
+            if (nome) {
+              item.cliente = nome;
+              carregarAgenda(view);
+            }
+          });
+        }
+        tbody.appendChild(tr);
+      });
+    }
+
+    loadData();
+  </script>
+</body>
+</html>

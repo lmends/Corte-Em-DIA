@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Corte em Dia - Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f0f0f0;
+    }
+
+    .login-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 300px;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background: #222;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .login-box button:hover {
+      background: #444;
+    }
+
+    .erro {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-box">
+  <h2>Login</h2>
+  <div id="erro" class="erro"></div>
+  <input type="text" id="usuario" placeholder="Usuário">
+  <input type="password" id="senha" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+</div>
+
+<script>
+  async function login() {
+    const usuarioInput = document.getElementById("usuario").value.trim();
+    const senhaInput = document.getElementById("senha").value.trim();
+    const erroDiv = document.getElementById("erro");
+
+    erroDiv.innerText = "";
+
+    if (!usuarioInput || !senhaInput) {
+      erroDiv.innerText = "Preencha todos os campos!";
+      return;
+    }
+
+    try {
+      const response = await fetch("dados/usuario.json");
+      const users = await response.json();
+
+      const user = users.find(u => u.usuario === usuarioInput && u.senha === senhaInput);
+
+      if (user) {
+        // Login bem-sucedido
+        // Salva info básica no sessionStorage e redireciona para painel
+        sessionStorage.setItem("usuarioLogado", JSON.stringify({
+          id: user.id,
+          nome: user.nome,
+          nivelAcesso: user.nivelAcesso,
+          local: user.local
+        }));
+
+        window.location.href = "painel.html";
+      } else {
+        erroDiv.innerText = "Usuário ou senha incorretos!";
+      }
+    } catch (err) {
+      erroDiv.innerText = "Erro ao carregar usuários.";
+      console.error(err);
+    }
+  }
+</script>
+
+</body>
+</html>
