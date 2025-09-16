@@ -1,11 +1,228 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=/operacional/painel.html">
-  <title>Corte em Dia</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corte em Dia - Gestão Inteligente para Barbearias</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS incluído aqui para simplicidade, mas pode ser movido para seu arquivo style.css */
+
+        :root {
+            --cor-principal: #007bff;
+            --cor-fundo-escuro: #343a40;
+            --cor-fundo-claro: #f8f9fa;
+            --cor-texto-claro: #ffffff;
+            --cor-texto-escuro: #333;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--cor-texto-escuro);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* --- Header --- */
+        header {
+            background: var(--cor-texto-claro);
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--cor-principal);
+            text-decoration: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            background: var(--cor-principal);
+            color: var(--cor-texto-claro);
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* --- Seção Herói (Principal) --- */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1599387737838-66a35678a1a2?q=80&w=1760') center center/cover no-repeat;
+            color: var(--cor-texto-claro);
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* --- Seção de Funcionalidades --- */
+        .features {
+            padding: 4rem 0;
+            background: var(--cor-fundo-claro);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: #ffffff;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .feature-card .icon {
+            font-size: 3rem;
+            color: var(--cor-principal);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Seção de CTA Final --- */
+        .cta {
+            background: var(--cor-principal);
+            color: var(--cor-texto-claro);
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .cta .btn {
+            background: var(--cor-texto-claro);
+            color: var(--cor-principal);
+            font-size: 1.1rem;
+        }
+        .cta .btn:hover {
+            background-color: #e2e6ea;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--cor-fundo-escuro);
+            color: var(--cor-texto-claro);
+            text-align: center;
+            padding: 2rem 0;
+        }
+    </style>
 </head>
 <body>
-  <p>Redirecionando para o sistema... Caso não seja redirecionado, <a href="/operacional/">clique aqui</a>.</p>
+
+    <header>
+        <div class="container">
+            <a href="#" class="logo">Corte em Dia</a>
+            <nav>
+                <a href="operacional/" class="btn">Acessar Sistema</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>A gestão da sua barbearia, simples e afiada.</h1>
+                <p>Chega de cadernos e planilhas confusas. Com o Corte em Dia, você organiza agendas, controla horários e foca no que realmente importa: seus clientes.</p>
+                <a href="operacional/" class="btn">Comece a organizar agora</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2>Tudo sob seu controle</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">📅</div>
+                        <h3>Agenda Inteligente</h3>
+                        <p>Visualize os horários por dia, semana ou por profissional. Identifique horários vagos em segundos e nunca mais perca um agendamento.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">⚙️</div>
+                        <h3>Controle Total</h3>
+                        <p>Defina as regras de trabalho para cada profissional. Abra e feche agendas para períodos específicos com poucos cliques, de forma automática.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📈</div>
+                        <h3>Visão Clara do Negócio</h3>
+                        <p>Tenha uma visão múltipla de todos os profissionais em uma única tela. Facilite a gestão do dia a dia e otimize a ocupação da sua barbearia.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <h2>Pronto para deixar a desorganização no passado?</h2>
+                <a href="operacional/" class="btn">Acessar minha agenda</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Corte em Dia. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
 </body>
 </html>
