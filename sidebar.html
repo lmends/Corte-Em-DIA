@@ -1,69 +1,201 @@
 <style>
-  html, body { margin:0; padding:0; height:100%; }
-.sidebar {
-  width:240px;
-  background:#1f1f1f;
-  color:#fff;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  height:100vh; /* Faz a sidebar ocupar toda a altura da tela */
-  box-sizing:border-box;
-  position:fixed; /* Mantém fixo enquanto o conteúdo rola */
-  top:0;
-  left:0;
-}
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+  }
 
-.sidebar h2 {
-  text-align:center;
-  margin-bottom:20px;
-  font-size:1.5em;
-  color:#ffcc00;
-}
+  .sidebar {
+    width: 260px;
+    background: #1f1f1f;
+    color: #fff;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 3px 0 15px rgba(0,0,0,0.3);
+    border-radius: 0 10px 10px 0;
+    user-select: none;
+  }
 
-.sidebar ul { list-style:none; padding:0; }
+  .sidebar h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+    color: #ffcc00;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+  }
 
-.sidebar li {
-  padding:10px 15px;
-  margin-bottom:8px;
-  border-radius:6px;
-  cursor:pointer;
-  transition: background 0.2s;
-}
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
 
-.sidebar li:hover { background:#333; }
+  .sidebar li {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    font-weight: 600;
+    font-size: 1rem;
+  }
 
-.sidebar li ul li {
-  padding-left:25px;
-  font-size:0.95em;
-}
+  .sidebar li:hover {
+    background-color: #333;
+    color: #ffcc00;
+  }
+
+  .sidebar li.active,
+  .sidebar li.active:hover {
+    background-color: #ffcc00;
+    color: #1f1f1f;
+    cursor: default;
+  }
+
+  /* Ícones */
+  .sidebar li .icon {
+    margin-right: 12px;
+    flex-shrink: 0;
+    fill: currentColor;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Submenu */
+  .sidebar li.has-submenu {
+    justify-content: space-between;
+  }
+
+  .sidebar li.has-submenu .arrow {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    user-select: none;
+  }
+
+  .sidebar li.has-submenu.open .arrow {
+    transform: rotate(90deg);
+  }
+
+  .sidebar ul.submenu {
+    list-style: none;
+    padding-left: 40px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .sidebar ul.submenu.open {
+    max-height: 500px; /* valor alto para permitir expansão */
+  }
+
+  .sidebar ul.submenu li {
+    padding: 8px 0;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+
+  .sidebar ul.submenu li:hover {
+    background-color: #444;
+    color: #ffcc00;
+  }
+
+  /* Cursor pointer só nos links clicáveis */
+  .sidebar li.no-click {
+    cursor: default;
+  }
 </style>
 
-<div class="sidebar">
+<div class="sidebar" role="navigation" aria-label="Menu principal">
   <h2>Corte em Dia</h2>
   <ul>
-    <li onclick="window.location.href='painel.html'">Dashboard</li>
-    <li>
-      Agenda
-      <ul>
-        <li onclick="window.location.href='diaria.html'">Diária</li>
-        <li onclick="window.location.href='semanal.html'">Semanal</li>
-        <li onclick="window.location.href='multipla.html'">Múltipla</li>
-        <li onclick="window.location.href='mensal.html'">Mensal</li>
-        <li onclick="window.location.href='abrir-agenda.html'">Abrir Agenda</li>
-      </ul>
+    <li class="active" onclick="window.location.href='painel.html'">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M3 9.5L12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V9.5z"/>
+      </svg>
+      Dashboard
     </li>
-    <li onclick="window.location.href='clientes.html'">Clientes</li>
-    <li onclick="window.location.href='profissionais.html'">Profissionais</li>
-    <li onclick="window.location.href='relatorios.html'">Relatórios</li>
-    <li onclick="logout()">Sair</li>
+
+    <li class="has-submenu" tabindex="0" aria-expanded="false" aria-controls="submenu-agenda">
+      <span>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7 11h10v2H7v-2zm0 4h7v2H7v-2zM19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM5 18V9h14v9H5z"/>
+        </svg>
+        Agenda
+      </span>
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+    </li>
+    <ul class="submenu" id="submenu-agenda" hidden>
+      <li onclick="window.location.href='diaria.html'">Diária</li>
+      <li onclick="window.location.href='semanal.html'">Semanal</li>
+      <li onclick="window.location.href='multipla.html'">Múltipla</li>
+      <li onclick="window.location.href='mensal.html'">Mensal</li>
+      <li onclick="window.location.href='abrir-agenda.html'">Abrir Agenda</li>
+    </ul>
+
+    <li onclick="window.location.href='clientes.html'">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+      </svg>
+      Clientes
+    </li>
+
+    <li onclick="window.location.href='profissionais.html'">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+      </svg>
+      Profissionais
+    </li>
+
+    <li onclick="window.location.href='relatorios.html'">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zm0-10v2h14V7H7z"/>
+      </svg>
+      Relatórios
+    </li>
+
+    <li class="no-click" onclick="logout()" style="margin-top:auto; font-weight:700; color:#ff5555; cursor:pointer;">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="fill:#ff5555;">
+        <path d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3h-8v2h8v14h-8v2h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/>
+      </svg>
+      Sair
+    </li>
   </ul>
 </div>
 
 <script>
-function logout() {
-  sessionStorage.removeItem("usuarioLogado");
-  window.location.href = "index.html";
-}
+  // Toggle submenu open/close
+  document.querySelectorAll('.sidebar li.has-submenu').forEach(item => {
+    item.addEventListener('click', () => {
+      const submenu = document.getElementById('submenu-agenda');
+      const isOpen = submenu.classList.toggle('open');
+      submenu.hidden = !isOpen;
+      item.classList.toggle('open', isOpen);
+      item.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Accessibility: toggle submenu with keyboard (Enter or Space)
+    item.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        item.click();
+      }
+    });
+  });
+
+  function logout() {
+    sessionStorage.removeItem("usuarioLogado");
+    window.location.href = "index.html";
+  }
 </script>
