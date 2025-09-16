@@ -2,6 +2,8 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getFirestore, collection, getDocs, query, where, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { inicializarSidebar } from './sidebar.js';
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyDtJ6dTHEOr3kl5hJeAQhnr2heDsUV1xfs",
@@ -154,9 +156,13 @@ window.addEventListener('DOMContentLoaded', () => {
         carregarAgendaDiaria(dataSelecionada, profissionalSelecionado);
     });
 
-    fetch('sidebar.html')
+    fetch('../operacional/sidebar.html')
         .then(res => res.text())
-        .then(html => { document.getElementById('sidebarContainer').innerHTML = html; })
+        .then(html => {
+            document.getElementById('sidebarContainer').innerHTML = html;
+            // CHAMA A FUNÇÃO DA SIDEBAR SÓ DEPOIS QUE O HTML FOI INSERIDO
+            inicializarSidebar(); 
+        })
         .catch(err => console.error("Erro ao carregar sidebar:", err));
 });
 

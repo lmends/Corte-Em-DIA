@@ -2,7 +2,7 @@ import http.server
 import socketserver
 
 # --- Configurações ---
-PORTA = 8000  # Você pode mudar para 9000, 8080, etc., se precisar
+PORTA = 9000  # Você pode mudar para 9000, 8080, etc., se precisar
 # ---------------------
 
 class Handler(http.server.SimpleHTTPRequestHandler):

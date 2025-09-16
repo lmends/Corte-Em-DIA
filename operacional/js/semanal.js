@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { inicializarSidebar } from './sidebar.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDtJ6dTHEOr3kl5hJeAQhnr2heDsUV1xfs",
@@ -143,8 +144,14 @@ async function carregarAgendaSemanal(semanaOffset = 0) {
 // --- INICIALIZAÇÃO DA PÁGINA ---
 window.addEventListener('DOMContentLoaded', async () => {
     // CORREÇÃO 2: O caminho para a sidebar deve ser absoluto a partir da raiz
-    fetch('sidebar.html')
-        .then(res => res.text()).then(html => { document.getElementById('sidebarContainer').innerHTML = html; });
+    fetch('../operacional/sidebar.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('sidebarContainer').innerHTML = html;
+                // CHAMA A FUNÇÃO DA SIDEBAR SÓ DEPOIS QUE O HTML FOI INSERIDO
+                inicializarSidebar(); 
+            })
+            .catch(err => console.error("Erro ao carregar sidebar:", err));
 
     await carregarDadosDeApoio();
     

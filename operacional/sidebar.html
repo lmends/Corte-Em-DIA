@@ -173,29 +173,3 @@
     </li>
   </ul>
 </div>
-
-<script>
-  // Toggle submenu open/close
-  document.querySelectorAll('.sidebar li.has-submenu').forEach(item => {
-    item.addEventListener('click', () => {
-      const submenu = document.getElementById('submenu-agenda');
-      const isOpen = submenu.classList.toggle('open');
-      submenu.hidden = !isOpen;
-      item.classList.toggle('open', isOpen);
-      item.setAttribute('aria-expanded', isOpen);
-    });
-
-    // Accessibility: toggle submenu with keyboard (Enter or Space)
-    item.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        item.click();
-      }
-    });
-  });
-
-  function logout() {
-    sessionStorage.removeItem("usuarioLogado");
-    window.location.href = "index.html";
-  }
-</script>
