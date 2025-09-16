@@ -1,4 +1,6 @@
-// Função para carregar JSON
+// utils/agendasemanalUtils.js
+
+// Carregar JSON genérico
 async function carregarJSON(path) {
   try {
     const res = await fetch(path);
@@ -10,69 +12,81 @@ async function carregarJSON(path) {
   }
 }
 
-// Função para obter agenda semanal com horários vazios
-async function obterAgendaSemanal(profissionalId = '') {
-  // Carrega dados
+/**
+ * Monta a agenda semanal por profissional
+ * @param {Date} inicio - Data de domingo
+ * @param {Date} fim - Data de sábado
+ */
+async function obterAgendaSemanal(inicio, fim) {
   const [usuarios, clientes, agenda, disponibilidades] = await Promise.all([
-    fetch('dados/usuario.json').then(r => r.json()),
-    fetch('dados/cliente.json').then(r => r.json()),
-    fetch('dados/agenda.json').then(r => r.json()),
-    fetch('dados/disponibilidade.json').then(r => r.json())
+    carregarJSON("dados/usuario.json"),
+    carregarJSON("dados/cliente.json"),
+    carregarJSON("dados/agenda.json"),
+    carregarJSON("dados/disponibilidade.json"),
   ]);
 
-  // Filtra profissionais se necessário
-  const profFiltrados = profissionalId
-    ? usuarios.filter(u => u.id === profissionalId)
-    : usuarios;
+  const semana = [];
+  const inicioStr = inicio.toISOString().split("T")[0];
+  const fimStr = fim.toISOString().split("T")[0];
 
-  const resultados = [];
+  // Cria lista de dias entre domingo e sábado
+  const diasSemana = [];
+  let d = new Date(inicio);
+  while (d <= fim) {
+    diasSemana.push(d.toISOString().split("T")[0]);
+    d.setDate(d.getDate() + 1);
+  }
 
-  profFiltrados.forEach(prof => {
-    // pega disponibilidade do profissional
-    const dispProf = disponibilidades.filter(d => d.profissionalId === prof.id);
+  usuarios.forEach((u) => {
+    const prof = {
+      id: u.id,
+      profissional: u.nome,
+      dias: [],
+    };
 
-    // monta a semana para cada dia da disponibilidade
-    const dias = dispProf.map(d => {
-      const [hIni, mIni] = d.horario_inicio.split(':').map(Number);
-      const [hFim, mFim] = d.horario_fim.split(':').map(Number);
-      const intervalo = d.intervalo_minutos || 30;
+    diasSemana.forEach((dia) => {
+      // disponibilidade do profissional nesse dia
+      const disp = disponibilidades.find(
+        (d) => d.profissionalId === u.id && d.dia === dia
+      );
 
-      let horarios = [];
-      let current = new Date(d.dia + 'T' + d.horario_inicio + ':00');
-      const fim = new Date(d.dia + 'T' + d.horario_fim + ':00');
+      const horarios = [];
+      if (disp) {
+        const [hIni, mIni] = disp.horario_inicio.split(":").map(Number);
+        const [hFim, mFim] = disp.horario_fim.split(":").map(Number);
+        const intervalo = disp.intervalo_minutos || 30;
 
-      while (current < fim) {
-        const horaStr = current.getHours().toString().padStart(2, '0') + ':' +
-                        current.getMinutes().toString().padStart(2, '0');
+        let inicioMin = hIni * 60 + mIni;
+        const fimMin = hFim * 60 + mFim;
 
-        // verifica se já tem agendamento nesse horário
-        const agendamento = agenda.find(a =>
-          a.profissionalId === prof.id &&
-          a.dia === d.dia &&
-          a.hora === horaStr
-        );
+        while (inicioMin < fimMin) {
+          const hora = String(Math.floor(inicioMin / 60)).padStart(2, "0");
+          const min = String(inicioMin % 60).padStart(2, "0");
+          const horaAtual = `${hora}:${min}`;
 
-        horarios.push({
-          hora: horaStr,
-          cliente: agendamento ? clientes.find(c => c.id === agendamento.clienteId)?.nome || '' : '',
-          servico: agendamento ? agendamento.servico : ''
-        });
+          // procura agendamento
+          const agendamento = agenda.find(
+            (a) => a.profissionalId === u.id && a.dia === dia && a.hora === horaAtual
+          );
 
-        current.setMinutes(current.getMinutes() + intervalo);
+          horarios.push({
+            hora: horaAtual,
+            agendado: !!agendamento,
+            cliente: agendamento
+              ? clientes.find((c) => c.id === agendamento.clienteId)?.nome || ""
+              : "",
+            servico: agendamento ? agendamento.servico : "",
+          });
+
+          inicioMin += intervalo;
+        }
       }
 
-      return {
-        data: d.dia,
-        horarios
-      };
+      prof.dias.push({ data: dia, horarios });
     });
 
-    resultados.push({
-      id: prof.id,
-      profissional: prof.nome,
-      dias
-    });
+    semana.push(prof);
   });
 
-  return resultados;
+  return semana;
 }

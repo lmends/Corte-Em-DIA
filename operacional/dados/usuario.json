@@ -1,6 +1,0 @@
-[
-  {"id":"u1","nome":"João","usuario":"joao123","senha":"123456","local":"Barbearia Central","nivel":"profissional"},
-  {"id":"u2","nome":"Maria","usuario":"maria456","senha":"abcdef","local":"Barbearia Central","nivel":"profissional"},
-  {"id":"u3","nome":"Carlos","usuario":"carlos789","senha":"qwerty","local":"Barbearia Central","nivel":"gerente"},
-  {"id":"u4","nome":"Lucas","usuario":"lucas","senha":"123456","local":"Barbearia Central","nivel":"gerente"}
-]

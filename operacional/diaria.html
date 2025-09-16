@@ -1,64 +1,73 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Agenda Diária - Corte em Dia</title>
-  <style>
-    body {margin:0; display:flex; font-family: Arial, sans-serif;}
-    .content {margin-left:240px; padding:20px; flex:1; height:100vh; overflow-y:auto; background:#f5f5f5;}
-    table {width:100%; border-collapse:collapse; background:#fff;}
-    th, td {padding:8px; border:1px solid #ccc; text-align:left;}
-    th {background:#222; color:#fff;}
-  </style>
+    <meta charset="UTF-8">
+    <title>Agenda Diária - Corte em Dia</title>
+    <link rel="stylesheet" href="css/diaria.css">
 </head>
 <body>
+    <div id="sidebarContainer"></div>
 
-  <!-- Sidebar -->
-  <div id="sidebarContainer"></div>
+    <div class="content">
+        <h1>Agenda Diária</h1>
 
-  <!-- Conteúdo principal -->
-  <div class="content">
-    <h1>Agenda Diária</h1>
-    <table id="agendaTable">
-      <thead>
-        <tr>
-          <th>Profissional</th>
-          <th>Cliente</th>
-          <th>Serviço</th>
-          <th>Data</th>
-          <th>Hora</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+        <div class="filtros-container">
+            <div class="form-group">
+                <label for="datePicker">Data:</label>
+                <input type="date" id="datePicker">
+            </div>
+            <div class="form-group">
+                <label for="selectProfissional">Profissional:</label>
+                <select id="selectProfissional">
+                    <option value="">Todos</option>
+                    </select>
+            </div>
+            <button id="btnFiltrar" class="btn-filtrar">Filtrar</button>
 
-  <!-- Scripts -->
-  <script src="agendaUtils.js"></script>
-  <script>
-    // Carrega sidebar
-    fetch('sidebar.html')
-      .then(res => res.text())
-      .then(html => { document.getElementById('sidebarContainer').innerHTML = html; });
+            <a href="abrir-agenda.html" class="btn-abrir-agenda">Abrir Agenda</a>
+        </div>
 
-    // Exibe agenda diária
-    const hoje = new Date('2025-09-14');
-    obterAgenda('diaria', null, hoje).then(eventos => {
-      const tbody = document.querySelector('#agendaTable tbody');
-      tbody.innerHTML = ''; // limpa tabela
-      eventos.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${item.profissional}</td>
-          <td>${item.cliente}</td>
-          <td>${item.servico}</td>
-          <td>${item.data}</td>
-          <td>${item.hora}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }).catch(err => console.error('Erro ao carregar agenda:', err));
-  </script>
+        <table id="agendaTable">
+            <thead>
+                <tr>
+                    <th>Profissional</th>
+                    <th>Cliente</th>
+                    <th>Procedimento</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
+    <div id="modalAgendamento" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitulo">Novo Agendamento</h3>
+            <form id="formAgendamento">
+                <input type="hidden" id="modalProfissionalId">
+                <input type="hidden" id="modalDia">
+                <input type="hidden" id="modalHora">
+                <div class="form-group">
+                    <label for="selectCliente">Cliente:</label>
+                    <select id="selectCliente" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="selectProcedimento">Procedimento:</label>
+                    <select id="selectProcedimento" required></select>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-salvar">Salvar Agendamento</button>
+                    <button type="button" id="btnCancelar" class="btn-cancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="module" src="js/diaria.js"></script>
+
+    
 </body>
 </html>

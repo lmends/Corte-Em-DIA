@@ -1,0 +1,246 @@
+/* ==============================================
+   CONFIGURAÇÕES GLOBAIS E VARIÁVEIS DE COR
+   ============================================== */
+:root {
+    --cor-principal: #007bff; /* Azul primário */
+    --cor-sucesso: #28a745;   /* Verde para agendar/salvar */
+    --cor-perigo: #dc3545;    /* Vermelho para cancelar */
+    --cor-fundo: #f4f7f6;     /* Cinza bem claro para o fundo */
+    --cor-texto: #333;       /* Cor principal do texto */
+    --cor-borda: #dee2e6;    /* Cor das bordas */
+    --cor-cabecalho-tabela: #343a40; /* Cinza escuro para cabeçalhos */
+}
+
+body {
+    margin: 0;
+    display: flex;
+    font-family: 'Roboto', sans-serif; /* <-- Nova fonte */
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+}
+
+.content {
+    margin-left: 240px; /* Assumindo que a sidebar tem 240px */
+    padding: 30px;
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* ==============================================
+   ESTILOS DOS FILTROS
+   ============================================== */
+.filtros-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--cor-borda);
+}
+
+.filtros-container .form-group {
+    margin-bottom: 0;
+}
+
+.filtros-container label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+}
+
+.filtros-container input[type="date"],
+.filtros-container select {
+    padding: 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filtros-container input[type="date"]:focus,
+.filtros-container select:focus {
+    outline: none;
+    border-color: var(--cor-principal);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* ==============================================
+   ESTILOS DA TABELA
+   ============================================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden; /* Garante que o border-radius funcione nos cantos */
+}
+
+th, td {
+    padding: 15px;
+    border-bottom: 1px solid var(--cor-borda);
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background: var(--cor-cabecalho-tabela);
+    color: #ffffff;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+/* Efeito "Zebra" para melhor legibilidade */
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tr:hover {
+    background-color: #e9ecef;
+}
+
+/* ==============================================
+   ESTILOS DOS BOTÕES
+   ============================================== */
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+    transform: translateY(-1px); /* Efeito de "levantar" */
+}
+
+.btn-agendar {
+    background-color: var(--cor-sucesso);
+    color: white;
+}
+.btn-agendar:hover {
+    background-color: #218838; /* Verde mais escuro */
+}
+
+.btn-filtrar {
+    background-color: var(--cor-principal);
+    color: white;
+}
+.btn-filtrar:hover {
+    background-color: #0069d9; /* Azul mais escuro */
+}
+
+.btn-salvar {
+    background-color: var(--cor-principal);
+    color: white;
+}
+.btn-cancelar {
+    background-color: var(--cor-perigo);
+    color: white;
+    margin-left: 10px;
+}
+
+.btn-desmarcar {
+    background-color: var(--cor-perigo);
+    color: white;
+    padding: 8px 10px; /* Um pouco menor para caber dois */
+    font-size: 13px;
+}
+.btn-desmarcar:hover {
+    background-color: #c82333; /* Vermelho mais escuro */
+}
+
+.btn-receber {
+    background-color: #ffc107; /* Amarelo/Laranja */
+    color: #212529; /* Texto escuro para contraste */
+    padding: 8px 10px;
+    font-size: 13px;
+}
+.btn-receber:hover {
+    background-color: #e0a800; /* Amarelo mais escuro */
+}
+
+/* Container para alinhar múltiplos botões na mesma célula */
+.acoes-multiplas {
+    display: flex;
+    gap: 8px; /* Espaço entre os botões */
+    align-items: center;
+}
+
+.btn-abrir-agenda {
+    /* Estilos para parecer um botão */
+    background-color: #6c757d; /* Um cinza secundário para diferenciar */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none; /* Remove o sublinhado padrão do link */
+    transition: background-color 0.2s ease, transform 0.1s ease;
+
+    /* A MÁGICA QUE ALINHA À DIREITA ACONTECE AQUI! */
+    margin-left: auto; 
+}
+
+.btn-abrir-agenda:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+/* ==============================================
+   ESTILOS DO MODAL (COM ANIMAÇÃO)
+   ============================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0; /* Começa invisível para a animação */
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(0.95); /* Começa um pouco menor para a animação */
+    transition: transform 0.3s ease;
+}
+
+/* Faz o modal aparecer com a animação */
+.modal-overlay.ativo {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-overlay.ativo .modal-content {
+    transform: scale(1);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.modal-actions {
+    text-align: right;
+    margin-top: 30px;
+}

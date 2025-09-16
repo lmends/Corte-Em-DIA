@@ -54,13 +54,27 @@
       .then(res => res.text())
       .then(html => { document.getElementById('sidebarContainer').innerHTML = html; });
 
+    // Calcula domingo e sábado da semana com base no offset
+    function calcularSemana(offset) {
+      const hoje = new Date();
+      const domingo = new Date(hoje);
+      domingo.setDate(domingo.getDate() - domingo.getDay() + offset * 7); // início da semana (domingo)
+
+      const sabado = new Date(domingo);
+      sabado.setDate(domingo.getDate() + 6); // fim da semana (sábado)
+
+      return { domingo, sabado };
+    }
+
     // Renderiza agenda semanal
     async function atualizarAgendaSemanalProfissional() {
       const container = document.getElementById('agendaContainer');
       container.innerHTML = '';
 
       const profSelecionado = document.getElementById('profissionalFiltro').value;
-      const agenda = await obterAgendaSemanal(profSelecionado);
+      const { domingo, sabado } = calcularSemana(semanaOffset);
+
+      const agenda = await obterAgendaSemanal(profSelecionado, domingo, sabado);
 
       agenda.forEach(prof => {
         prof.dias.forEach(dia => {
@@ -81,8 +95,8 @@
               ${dia.horarios.map(h => `
                 <tr>
                   <td>${h.hora}</td>
-                  <td>${h.cliente}</td>
-                  <td>${h.servico}</td>
+                  <td>${h.cliente || ''}</td>
+                  <td>${h.servico || ''}</td>
                 </tr>`).join('')}
             </tbody>
           `;

@@ -1,86 +1,85 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Abrir Agenda - Corte em Dia</title>
-  <style>
-    body { margin:0; display:flex; height:100vh; font-family: Arial, sans-serif; }
-    iframe { border:none; height:100vh; }
-    .content { flex:1; padding:20px; overflow-y:auto; background:#f5f5f5; }
-    label{display:block;margin-top:10px;}
-    input,select,button{padding:6px;margin-top:5px;}
-    .agenda-aberta{border:1px solid #ccc;padding:8px;margin-top:10px;border-radius:4px;background:#fff;}
-  </style>
+    <meta charset="UTF-8">
+    <title>Grade de Horários - Corte em Dia</title>
+    <link rel="stylesheet" href="/operacional/css/abrir-agenda.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div id="sidebarContainer"></div>
 
-  <div id="sidebarContainer"></div>
+    <div class="content">
+        <h1>Grade de Horários</h1>
+        <div class="form-container">
+            <div class="filtros-container" style="justify-content: space-between;">
+                <div class="form-group">
+                    <label for="selectProfissional">Visualizar grade do profissional:</label>
+                    <select id="selectProfissional"></select>
+                </div>
+                <button id="btnAbrirModalInclusao" class="btn-principal">Incluir Grade</button>
+            </div>
 
-    <script>
-    fetch('sidebar.html')
-        .then(res => res.text())
-        .then(html => {
-        document.getElementById('sidebarContainer').innerHTML = html;
-        });
-    </script>
+            <div id="gradeVigenteContainer" class="grade-vigente-container"></div>
+        </div>
+    </div>
 
-  <div class="content">
-    <h1>Abrir Agenda</h1>
+    <div id="modalIncluirGrade" class="modal-overlay">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Incluir uma grade</h3>
+                <button id="btnFecharModal" class="btn-fechar-modal">×</button>
+            </div>
+            <form id="formIncluirGrade">
+                <div class="weekdays-selector">
+                    <label>Selecione os dias da semana para a grade:</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="dia-0" value="0"><label for="dia-0">Dom</label>
+                        <input type="checkbox" id="dia-1" value="1"><label for="dia-1">Seg</label>
+                        <input type="checkbox" id="dia-2" value="2"><label for="dia-2">Ter</label>
+                        <input type="checkbox" id="dia-3" value="3"><label for="dia-3">Qua</label>
+                        <input type="checkbox" id="dia-4" value="4"><label for="dia-4">Qui</label>
+                        <input type="checkbox" id="dia-5" value="5"><label for="dia-5">Sex</label>
+                        <input type="checkbox" id="dia-6" value="6"><label for="dia-6">Sáb</label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="horaInicial">Hora inicial *</label>
+                        <input type="time" id="horaInicial" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="horaFinal">Hora final *</label>
+                        <input type="time" id="horaFinal" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="intervalo">Tempo de atendimento (min) *</label>
+                        <input type="number" id="intervalo" value="30" required>
+                    </div>
+                </div>
+                <div class="form-row">
 
-    <label for="profissional">Profissional</label>
-    <select id="profissional">
-      <option value="João">João</option>
-      <option value="Maria">Maria</option>
-    </select>
-
-    <label for="data">Data</label>
-    <input type="date" id="data">
-
-    <label for="horaInicio">Hora de início</label>
-    <input type="time" id="horaInicio">
-
-    <label for="horaFim">Hora de fim</label>
-    <input type="time" id="horaFim">
-
-    <button onclick="abrirAgenda()">Abrir Agenda</button>
-
-    <h2>Agendas já abertas</h2>
-    <div id="listaAgendas"></div>
-  </div>
-
-  <script>
-    const usuarioLogado = JSON.parse(sessionStorage.getItem("usuarioLogado"));
-    if(!usuarioLogado){
-      alert("Você precisa fazer login!");
-      window.location.href = "../index.html";
-    }
-
-    const agendasAbertas = [];
-
-    function abrirAgenda() {
-      const profissional = document.getElementById("profissional").value;
-      const data = document.getElementById("data").value;
-      const horaInicio = document.getElementById("horaInicio").value;
-      const horaFim = document.getElementById("horaFim").value;
-
-      if (!profissional || !data || !horaInicio || !horaFim) {
-        alert("Preencha todos os campos!");
-        return;
-      }
-
-      const novaAgenda = {profissional,data,horaInicio,horaFim};
-      agendasAbertas.push(novaAgenda);
-      atualizarLista();
-    }
-
-    function atualizarLista() {
-      const lista = document.getElementById("listaAgendas");
-      lista.innerHTML = "";
-      agendasAbertas.forEach(a=>{
-        lista.innerHTML += `<div class="agenda-aberta"><strong>${a.profissional}</strong> | ${a.data} | ${a.horaInicio} às ${a.horaFim}</div>`;
-      });
-    }
-  </script>
-
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dataInicio">Vigente desde *</label>
+                        <input type="date" id="dataInicio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataFim">Até *</label>
+                        <input type="date" id="dataFim" required>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="btnCancelarInclusao" class="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script type="module" src="/operacional/js/abrir-agenda.js"></script>
 </body>
 </html>
