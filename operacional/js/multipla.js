@@ -143,7 +143,7 @@ async function carregarAgendaMultipla(dataReferencia) {
 
 // --- INICIALIZAÇÃO DA PÁGINA ---
 window.addEventListener('DOMContentLoaded', () => {
-    fetch('/operacional/sidebar.html')
+    fetch('sidebar.html')
         .then(res => res.text()).then(html => { document.getElementById('sidebarContainer').innerHTML = html; });
 
     const datePicker = document.getElementById('datePicker');

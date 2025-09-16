@@ -155,7 +155,7 @@ formIncluirGrade.addEventListener('submit', async (event) => {
 
 // --- INICIALIZAÇÃO DA PÁGINA ---
 window.addEventListener('DOMContentLoaded', async () => {
-    fetch('/operacional/sidebar.html')
+    fetch('sidebar.html')
         .then(res => res.text()).then(html => { document.getElementById('sidebarContainer').innerHTML = html; });
 
     selectProfissional.innerHTML = '<option value="">Selecione um profissional</option>';
