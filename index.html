@@ -1,228 +1,465 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corte em Dia - Gestão Inteligente para Barbearias</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Corte em Dia - Gestão Inteligente para Barbearias</title>
 
-    <style>
-        /* CSS incluído aqui para simplicidade, mas pode ser movido para seu arquivo style.css */
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
 
-        :root {
-            --cor-principal: #007bff;
-            --cor-fundo-escuro: #343a40;
-            --cor-fundo-claro: #f8f9fa;
-            --cor-texto-claro: #ffffff;
-            --cor-texto-escuro: #333;
-        }
+<style>
+  /* Variáveis de cor */
+  :root {
+    --cor-primaria: #ffcc00;
+    --cor-secundaria: #007bff;
+    --cor-fundo: #121212;
+    --cor-fundo-claro: #f9f9f9;
+    --cor-texto-claro: #ffffff;
+    --cor-texto-escuro: #222222;
+    --cor-botao-hover: #e6b800;
+  }
 
-        body {
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
-            line-height: 1.6;
-            color: var(--cor-texto-escuro);
-        }
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--cor-fundo-claro);
+    color: var(--cor-texto-escuro);
+    line-height: 1.5;
+  }
 
-        /* --- Header --- */
-        header {
-            background: var(--cor-texto-claro);
-            padding: 1rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+  /* Header */
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--cor-fundo);
+    color: var(--cor-texto-claro);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--cor-principal);
-            text-decoration: none;
-        }
+  .logo {
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--cor-primaria);
+    user-select: none;
+  }
 
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 1.8rem;
-            background: var(--cor-principal);
-            color: var(--cor-texto-claro);
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.8rem;
+  }
 
-        .btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
+  nav ul li {
+    font-weight: 600;
+    font-size: 1rem;
+  }
 
-        /* --- Seção Herói (Principal) --- */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1599387737838-66a35678a1a2?q=80&w=1760') center center/cover no-repeat;
-            color: var(--cor-texto-claro);
-            padding: 6rem 0;
-            text-align: center;
-        }
+  nav ul li a {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+  }
 
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin-bottom: 1rem;
-        }
+  nav ul li a:hover,
+  nav ul li a:focus {
+    background-color: var(--cor-primaria);
+    color: var(--cor-fundo);
+    outline: none;
+  }
 
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto 2rem auto;
-        }
+  /* Botão CTA no menu */
+  .btn-cta {
+    background-color: var(--cor-primaria);
+    color: var(--cor-fundo);
+    font-weight: 700;
+    padding: 0.6rem 1.6rem;
+    border-radius: 30px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
 
-        /* --- Seção de Funcionalidades --- */
-        .features {
-            padding: 4rem 0;
-            background: var(--cor-fundo-claro);
-        }
+  .btn-cta:hover,
+  .btn-cta:focus {
+    background-color: var(--cor-botao-hover);
+    transform: translateY(-2px);
+    outline: none;
+  }
 
-        .features h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-        }
+  /* Espaço para o header fixo */
+  main {
+    padding-top: 80px;
+  }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
+  /* Hero */
+  .hero {
+    background: linear-gradient(rgba(18,18,18,0.7), rgba(18,18,18,0.7)),
+      url('https://images.unsplash.com/photo-1599387737838-66a35678a1a2?q=80&w=1760') center/cover no-repeat;
+    color: var(--cor-texto-claro);
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 1rem;
+  }
 
-        .feature-card {
-            background: #ffffff;
-            padding: 2.5rem 2rem;
-            text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        }
+  .hero h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    max-width: 700px;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+  }
 
-        .feature-card .icon {
-            font-size: 3rem;
-            color: var(--cor-principal);
-            margin-bottom: 1rem;
-        }
+  .hero p {
+    font-size: 1.3rem;
+    max-width: 600px;
+    margin-bottom: 2.5rem;
+    font-weight: 400;
+  }
 
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
+  .hero .btn-primary {
+    background-color: var(--cor-primaria);
+    color: var(--cor-fundo);
+    font-weight: 700;
+    font-size: 1.2rem;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    box-shadow: 0 6px 15px rgba(255,204,0,0.6);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  }
 
-        /* --- Seção de CTA Final --- */
-        .cta {
-            background: var(--cor-principal);
-            color: var(--cor-texto-claro);
-            padding: 4rem 0;
-            text-align: center;
-        }
+  .hero .btn-primary:hover,
+  .hero .btn-primary:focus {
+    background-color: var(--cor-botao-hover);
+    box-shadow: 0 8px 25px rgba(230,184,0,0.8);
+    transform: translateY(-4px);
+    outline: none;
+  }
 
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .cta .btn {
-            background: var(--cor-texto-claro);
-            color: var(--cor-principal);
-            font-size: 1.1rem;
-        }
-        .cta .btn:hover {
-            background-color: #e2e6ea;
-        }
+  /* Seção funcionalidades */
+  .features {
+    max-width: 1100px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+  }
 
-        /* --- Footer --- */
-        footer {
-            background: var(--cor-fundo-escuro);
-            color: var(--cor-texto-claro);
-            text-align: center;
-            padding: 2rem 0;
-        }
-    </style>
+  .features h2 {
+    text-align: center;
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    color: var(--cor-texto-escuro);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 2.5rem;
+  }
+
+  .feature-card {
+    background: var(--cor-texto-claro);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+  }
+
+  .feature-card:hover,
+  .feature-card:focus-within {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    outline: none;
+  }
+
+  .feature-icon {
+    font-size: 4rem;
+    color: var(--cor-primaria);
+    margin-bottom: 1rem;
+    user-select: none;
+  }
+
+  .feature-card h3 {
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
+    color: var(--cor-texto-escuro);
+  }
+
+  .feature-card p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.4;
+  }
+
+  /* Seção preços (placeholder) */
+  .pricing {
+    background: var(--cor-fundo);
+    color: var(--cor-texto-claro);
+    padding: 4rem 1rem;
+    text-align: center;
+  }
+
+  .pricing h2 {
+    font-size: 2.8rem;
+    margin-bottom: 3rem;
+    font-weight: 700;
+  }
+
+  .pricing-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 2.5rem;
+  }
+
+  .pricing-card {
+    background: #222;
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .pricing-card:hover,
+  .pricing-card:focus-within {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+    outline: none;
+  }
+
+  .pricing-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--cor-primaria);
+  }
+
+  .pricing-card p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: #ccc;
+  }
+
+  .pricing-card .price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--cor-primaria);
+  }
+
+  .pricing-card .btn-secondary {
+    background-color: var(--cor-primaria);
+    color: var(--cor-fundo);
+    font-weight: 700;
+    padding: 0.8rem 2rem;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    box-shadow: 0 6px 15px rgba(255,204,0,0.6);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .pricing-card .btn-secondary:hover,
+  .pricing-card .btn-secondary:focus {
+    background-color: var(--cor-botao-hover);
+    box-shadow: 0 8px 25px rgba(230,184,0,0.8);
+    transform: translateY(-3px);
+    outline: none;
+  }
+
+  /* CTA final */
+  .final-cta {
+    background: var(--cor-primaria);
+    color: var(--cor-fundo);
+    padding: 4rem 1rem;
+    text-align: center;
+    border-radius: 8px;
+    max-width: 900px;
+    margin: 0 auto 4rem;
+    box-shadow: 0 8px 20px rgba(255,204,0,0.4);
+  }
+
+  .final-cta h2 {
+    font-size: 2.8rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+  }
+
+  .final-cta a.btn-primary {
+    background-color: var(--cor-fundo);
+    color: var(--cor-primaria);
+    font-weight: 700;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    font-size: 1.3rem;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+  }
+
+  .final-cta a.btn-primary:hover,
+  .final-cta a.btn-primary:focus {
+    background-color: #222;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    transform: translateY(-4px);
+    outline: none;
+  }
+
+  /* Footer */
+  footer {
+    background: var(--cor-fundo);
+    color: var(--cor-texto-claro);
+    text-align: center;
+    padding: 2rem 1rem;
+    user-select: none;
+  }
+
+  footer p {
+    font-size: 0.9rem;
+  }
+
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.4rem;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+    }
+
+    .features h2,
+    .pricing h2,
+    .final-cta h2 {
+      font-size: 2rem;
+    }
+
+    nav ul {
+      gap: 1rem;
+    }
+
+    nav ul li a,
+    nav ul li a.btn-cta {
+      font-size: 0.9rem;
+      padding: 0.4rem 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero h1 {
+      font-size: 1.8rem;
+    }
+
+    .hero p {
+      font-size: 1rem;
+    }
+
+    .features-grid,
+    .pricing-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="container">
-            <a href="#" class="logo">Corte em Dia</a>
-            <nav>
-                <a href="operacional/" class="btn">Acessar Sistema</a>
-            </nav>
-        </div>
-    </header>
+<header>
+  <a href="#" class="logo" aria-label="Corte em Dia - Página inicial">Corte em Dia</a>
+  <nav aria-label="Menu principal">
+    <ul>
+      <li><a href="#" tabindex="0">Início</a></li>
+      <li><a href="#features" tabindex="0">Funcionalidades</a></li>
+      <li><a href="#pricing" tabindex="0">Preços</a></li>
+      <li><a href="operacional/" class="btn-cta" tabindex="0">Acessar Sistema</a></li>
+    </ul>
+  </nav>
+</header>
 
-    <main>
-        <section class="hero">
-            <div class="container">
-                <h1>A gestão da sua barbearia, simples e afiada.</h1>
-                <p>Chega de cadernos e planilhas confusas. Com o Corte em Dia, você organiza agendas, controla horários e foca no que realmente importa: seus clientes.</p>
-                <a href="operacional/" class="btn">Comece a organizar agora</a>
-            </div>
-        </section>
+<main>
+  <section class="hero" role="banner" aria-label="Apresentação do Corte em Dia">
+    <h1>A gestão da sua barbearia, simples e afiada.</h1>
+    <p>Chega de cadernos e planilhas confusas. Com o Corte em Dia, você organiza agendas, controla horários e foca no que realmente importa: seus clientes.</p>
+    <a href="operacional/" class="btn-primary" role="button">Comece a organizar agora</a>
+  </section>
 
-        <section class="features">
-            <div class="container">
-                <h2>Tudo sob seu controle</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="icon">📅</div>
-                        <h3>Agenda Inteligente</h3>
-                        <p>Visualize os horários por dia, semana ou por profissional. Identifique horários vagos em segundos e nunca mais perca um agendamento.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="icon">⚙️</div>
-                        <h3>Controle Total</h3>
-                        <p>Defina as regras de trabalho para cada profissional. Abra e feche agendas para períodos específicos com poucos cliques, de forma automática.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="icon">📈</div>
-                        <h3>Visão Clara do Negócio</h3>
-                        <p>Tenha uma visão múltipla de todos os profissionais em uma única tela. Facilite a gestão do dia a dia e otimize a ocupação da sua barbearia.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <section class="features" id="features" aria-labelledby="features-title">
+    <h2 id="features-title">Tudo sob seu controle</h2>
+    <div class="features-grid">
+      <article class="feature-card" tabindex="0">
+        <div class="feature-icon" aria-hidden="true">📅</div>
+        <h3>Agenda Inteligente</h3>
+        <p>Visualize os horários por dia, semana ou por profissional. Identifique horários vagos em segundos e nunca mais perca um agendamento.</p>
+      </article>
+      <article class="feature-card" tabindex="0">
+        <div class="feature-icon" aria-hidden="true">⚙️</div>
+        <h3>Controle Total</h3>
+        <p>Defina as regras de trabalho para cada profissional. Abra e feche agendas para períodos específicos com poucos cliques, de forma automática.</p>
+      </article>
+      <article class="feature-card" tabindex="0">
+        <div class="feature-icon" aria-hidden="true">📈</div>
+        <h3>Visão Clara do Negócio</h3>
+        <p>Tenha uma visão múltipla de todos os profissionais em uma única tela. Facilite a gestão do dia a dia e otimize a ocupação da sua barbearia.</p>
+      </article>
+    </div>
+  </section>
 
-        <section class="cta">
-            <div class="container">
-                <h2>Pronto para deixar a desorganização no passado?</h2>
-                <a href="operacional/" class="btn">Acessar minha agenda</a>
-            </div>
-        </section>
-    </main>
+  <section class="pricing" id="pricing" aria-labelledby="pricing-title">
+    <h2 id="pricing-title">Planos e Preços</h2>
+    <div class="pricing-grid">
+      <article class="pricing-card" tabindex="0">
+        <h3>Básico</h3>
+        <p>Ideal para barbearias pequenas que querem organizar agendas e clientes.</p>
+        <div class="price">R$ 49,90 / mês</div>
+        <button class="btn-secondary" aria-label="Assinar plano básico">Assinar</button>
+      </article>
+      <article class="pricing-card" tabindex="0">
+        <h3>Profissional</h3>
+        <p>Para barbearias com múltiplos profissionais e controle avançado.</p>
+        <div class="price">R$ 99,90 / mês</div>
+        <button class="btn-secondary" aria-label="Assinar plano profissional">Assinar</button>
+      </article>
+      <article class="pricing-card" tabindex="0">
+        <h3>Premium</h3>
+        <p>Todos os recursos, suporte prioritário e personalização.</p>
+        <div class="price">R$ 149,90 / mês</div>
+        <button class="btn-secondary" aria-label="Assinar plano premium">Assinar</button>
+      </article>
+    </div>
+  </section>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Corte em Dia. Todos os direitos reservados.</p>
-        </div>
-    </footer>
+  <section class="final-cta" aria-label="Chamada final para ação">
+    <h2>Pronto para deixar a desorganização no passado?</h2>
+    <a href="operacional/" class="btn-primary" role="button">Acessar minha agenda</a>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 Corte em Dia. Todos os direitos reservados.</p>
+</footer>
 
 </body>
 </html>

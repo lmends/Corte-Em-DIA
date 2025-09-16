@@ -1,465 +1,105 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Corte em Dia - Gestão Inteligente para Barbearias</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-
-<style>
-  /* Variáveis de cor */
-  :root {
-    --cor-primaria: #ffcc00;
-    --cor-secundaria: #007bff;
-    --cor-fundo: #121212;
-    --cor-fundo-claro: #f9f9f9;
-    --cor-texto-claro: #ffffff;
-    --cor-texto-escuro: #222222;
-    --cor-botao-hover: #e6b800;
-  }
-
-  /* Reset */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: var(--cor-fundo-claro);
-    color: var(--cor-texto-escuro);
-    line-height: 1.5;
-  }
-
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  /* Header */
-  header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: var(--cor-fundo);
-    color: var(--cor-texto-claro);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.7);
-  }
-
-  .logo {
-    font-weight: 700;
-    font-size: 1.8rem;
-    color: var(--cor-primaria);
-    user-select: none;
-  }
-
-  nav ul {
-    list-style: none;
-    display: flex;
-    gap: 1.8rem;
-  }
-
-  nav ul li {
-    font-weight: 600;
-    font-size: 1rem;
-  }
-
-  nav ul li a {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-  }
-
-  nav ul li a:hover,
-  nav ul li a:focus {
-    background-color: var(--cor-primaria);
-    color: var(--cor-fundo);
-    outline: none;
-  }
-
-  /* Botão CTA no menu */
-  .btn-cta {
-    background-color: var(--cor-primaria);
-    color: var(--cor-fundo);
-    font-weight: 700;
-    padding: 0.6rem 1.6rem;
-    border-radius: 30px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-
-  .btn-cta:hover,
-  .btn-cta:focus {
-    background-color: var(--cor-botao-hover);
-    transform: translateY(-2px);
-    outline: none;
-  }
-
-  /* Espaço para o header fixo */
-  main {
-    padding-top: 80px;
-  }
-
-  /* Hero */
-  .hero {
-    background: linear-gradient(rgba(18,18,18,0.7), rgba(18,18,18,0.7)),
-      url('https://images.unsplash.com/photo-1599387737838-66a35678a1a2?q=80&w=1760') center/cover no-repeat;
-    color: var(--cor-texto-claro);
-    min-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 0 1rem;
-  }
-
-  .hero h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    max-width: 700px;
-    margin-bottom: 1rem;
-    line-height: 1.1;
-  }
-
-  .hero p {
-    font-size: 1.3rem;
-    max-width: 600px;
-    margin-bottom: 2.5rem;
-    font-weight: 400;
-  }
-
-  .hero .btn-primary {
-    background-color: var(--cor-primaria);
-    color: var(--cor-fundo);
-    font-weight: 700;
-    font-size: 1.2rem;
-    padding: 1rem 3rem;
-    border-radius: 50px;
-    box-shadow: 0 6px 15px rgba(255,204,0,0.6);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-  }
-
-  .hero .btn-primary:hover,
-  .hero .btn-primary:focus {
-    background-color: var(--cor-botao-hover);
-    box-shadow: 0 8px 25px rgba(230,184,0,0.8);
-    transform: translateY(-4px);
-    outline: none;
-  }
-
-  /* Seção funcionalidades */
-  .features {
-    max-width: 1100px;
-    margin: 4rem auto;
-    padding: 0 1rem;
-  }
-
-  .features h2 {
-    text-align: center;
-    font-size: 2.8rem;
-    font-weight: 700;
-    margin-bottom: 3rem;
-    color: var(--cor-texto-escuro);
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
-    gap: 2.5rem;
-  }
-
-  .feature-card {
-    background: var(--cor-texto-claro);
-    border-radius: 12px;
-    padding: 2.5rem 2rem;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: default;
-  }
-
-  .feature-card:hover,
-  .feature-card:focus-within {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
-    outline: none;
-  }
-
-  .feature-icon {
-    font-size: 4rem;
-    color: var(--cor-primaria);
-    margin-bottom: 1rem;
-    user-select: none;
-  }
-
-  .feature-card h3 {
-    font-size: 1.6rem;
-    margin-bottom: 0.75rem;
-    color: var(--cor-texto-escuro);
-  }
-
-  .feature-card p {
-    font-size: 1rem;
-    color: #555;
-    line-height: 1.4;
-  }
-
-  /* Seção preços (placeholder) */
-  .pricing {
-    background: var(--cor-fundo);
-    color: var(--cor-texto-claro);
-    padding: 4rem 1rem;
-    text-align: center;
-  }
-
-  .pricing h2 {
-    font-size: 2.8rem;
-    margin-bottom: 3rem;
-    font-weight: 700;
-  }
-
-  .pricing-grid {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
-    gap: 2.5rem;
-  }
-
-  .pricing-card {
-    background: #222;
-    border-radius: 12px;
-    padding: 2.5rem 2rem;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .pricing-card:hover,
-  .pricing-card:focus-within {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.6);
-    outline: none;
-  }
-
-  .pricing-card h3 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    color: var(--cor-primaria);
-  }
-
-  .pricing-card p {
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
-    color: #ccc;
-  }
-
-  .pricing-card .price {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    color: var(--cor-primaria);
-  }
-
-  .pricing-card .btn-secondary {
-    background-color: var(--cor-primaria);
-    color: var(--cor-fundo);
-    font-weight: 700;
-    padding: 0.8rem 2rem;
-    border-radius: 30px;
-    font-size: 1.1rem;
-    box-shadow: 0 6px 15px rgba(255,204,0,0.6);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-    border: none;
-    cursor: pointer;
-  }
-
-  .pricing-card .btn-secondary:hover,
-  .pricing-card .btn-secondary:focus {
-    background-color: var(--cor-botao-hover);
-    box-shadow: 0 8px 25px rgba(230,184,0,0.8);
-    transform: translateY(-3px);
-    outline: none;
-  }
-
-  /* CTA final */
-  .final-cta {
-    background: var(--cor-primaria);
-    color: var(--cor-fundo);
-    padding: 4rem 1rem;
-    text-align: center;
-    border-radius: 8px;
-    max-width: 900px;
-    margin: 0 auto 4rem;
-    box-shadow: 0 8px 20px rgba(255,204,0,0.4);
-  }
-
-  .final-cta h2 {
-    font-size: 2.8rem;
-    margin-bottom: 2rem;
-    font-weight: 700;
-  }
-
-  .final-cta a.btn-primary {
-    background-color: var(--cor-fundo);
-    color: var(--cor-primaria);
-    font-weight: 700;
-    padding: 1rem 3rem;
-    border-radius: 50px;
-    font-size: 1.3rem;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-    display: inline-block;
-  }
-
-  .final-cta a.btn-primary:hover,
-  .final-cta a.btn-primary:focus {
-    background-color: #222;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-    transform: translateY(-4px);
-    outline: none;
-  }
-
-  /* Footer */
-  footer {
-    background: var(--cor-fundo);
-    color: var(--cor-texto-claro);
-    text-align: center;
-    padding: 2rem 1rem;
-    user-select: none;
-  }
-
-  footer p {
-    font-size: 0.9rem;
-  }
-
-  /* Responsividade */
-  @media (max-width: 768px) {
-    .hero h1 {
-      font-size: 2.4rem;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-    }
-
-    .features h2,
-    .pricing h2,
-    .final-cta h2 {
-      font-size: 2rem;
-    }
-
-    nav ul {
-      gap: 1rem;
-    }
-
-    nav ul li a,
-    nav ul li a.btn-cta {
-      font-size: 0.9rem;
-      padding: 0.4rem 1rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .hero h1 {
-      font-size: 1.8rem;
-    }
-
-    .hero p {
-      font-size: 1rem;
-    }
-
-    .features-grid,
-    .pricing-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>Corte em Dia - Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; }
+        .login-box { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.2); width: 300px; }
+        .login-box h2 { margin-bottom: 20px; text-align: center; }
+        .login-box input { width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #ccc; }
+        .login-box button { width: 100%; padding: 10px; border: none; border-radius: 4px; background: #222; color: #fff; cursor: pointer; font-size: 16px; }
+        .login-box button:hover { background: #444; }
+        .erro { color: red; text-align: center; margin-bottom: 10px; min-height: 1.2em; }
+    </style>
 </head>
 <body>
 
-<header>
-  <a href="#" class="logo" aria-label="Corte em Dia - Página inicial">Corte em Dia</a>
-  <nav aria-label="Menu principal">
-    <ul>
-      <li><a href="#" tabindex="0">Início</a></li>
-      <li><a href="#features" tabindex="0">Funcionalidades</a></li>
-      <li><a href="#pricing" tabindex="0">Preços</a></li>
-      <li><a href="operacional/" class="btn-cta" tabindex="0">Acessar Sistema</a></li>
-    </ul>
-  </nav>
-</header>
+<div class="login-box">
+    <h2>Login</h2>
+    <div id="erro" class="erro"></div>
+    <input type="text" id="usuario" placeholder="Usuário">
+    <input type="password" id="senha" placeholder="Senha">
+    <button id="loginBtn">Entrar</button>
+</div>
 
-<main>
-  <section class="hero" role="banner" aria-label="Apresentação do Corte em Dia">
-    <h1>A gestão da sua barbearia, simples e afiada.</h1>
-    <p>Chega de cadernos e planilhas confusas. Com o Corte em Dia, você organiza agendas, controla horários e foca no que realmente importa: seus clientes.</p>
-    <a href="operacional/" class="btn-primary" role="button">Comece a organizar agora</a>
-  </section>
+<script type="module">
+    // 1. Importa as ferramentas do Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-  <section class="features" id="features" aria-labelledby="features-title">
-    <h2 id="features-title">Tudo sob seu controle</h2>
-    <div class="features-grid">
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">📅</div>
-        <h3>Agenda Inteligente</h3>
-        <p>Visualize os horários por dia, semana ou por profissional. Identifique horários vagos em segundos e nunca mais perca um agendamento.</p>
-      </article>
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">⚙️</div>
-        <h3>Controle Total</h3>
-        <p>Defina as regras de trabalho para cada profissional. Abra e feche agendas para períodos específicos com poucos cliques, de forma automática.</p>
-      </article>
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">📈</div>
-        <h3>Visão Clara do Negócio</h3>
-        <p>Tenha uma visão múltipla de todos os profissionais em uma única tela. Facilite a gestão do dia a dia e otimize a ocupação da sua barbearia.</p>
-      </article>
-    </div>
-  </section>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDtJ6dTHEOr3kl5hJeAQhnr2heDsUV1xfs",
+        authDomain: "corteemdia.firebaseapp.com",
+        projectId: "corteemdia",
+        storageBucket: "corteemdia.firebasestorage.app",
+        messagingSenderId: "142201652364",
+        appId: "1:142201652364:web:23f4dd7ea358534b2627a9",
+        measurementId: "G-G02HYCX1VN"
+    };
 
-  <section class="pricing" id="pricing" aria-labelledby="pricing-title">
-    <h2 id="pricing-title">Planos e Preços</h2>
-    <div class="pricing-grid">
-      <article class="pricing-card" tabindex="0">
-        <h3>Básico</h3>
-        <p>Ideal para barbearias pequenas que querem organizar agendas e clientes.</p>
-        <div class="price">R$ 49,90 / mês</div>
-        <button class="btn-secondary" aria-label="Assinar plano básico">Assinar</button>
-      </article>
-      <article class="pricing-card" tabindex="0">
-        <h3>Profissional</h3>
-        <p>Para barbearias com múltiplos profissionais e controle avançado.</p>
-        <div class="price">R$ 99,90 / mês</div>
-        <button class="btn-secondary" aria-label="Assinar plano profissional">Assinar</button>
-      </article>
-      <article class="pricing-card" tabindex="0">
-        <h3>Premium</h3>
-        <p>Todos os recursos, suporte prioritário e personalização.</p>
-        <div class="price">R$ 149,90 / mês</div>
-        <button class="btn-secondary" aria-label="Assinar plano premium">Assinar</button>
-      </article>
-    </div>
-  </section>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  <section class="final-cta" aria-label="Chamada final para ação">
-    <h2>Pronto para deixar a desorganização no passado?</h2>
-    <a href="operacional/" class="btn-primary" role="button">Acessar minha agenda</a>
-  </section>
-</main>
+    async function login() {
+        const usuarioInput = document.getElementById("usuario").value.trim();
+        const senhaInput = document.getElementById("senha").value.trim();
+        const erroDiv = document.getElementById("erro");
 
-<footer>
-  <p>&copy; 2025 Corte em Dia. Todos os direitos reservados.</p>
-</footer>
+        erroDiv.innerText = "";
+
+        if (!usuarioInput || !senhaInput) {
+            erroDiv.innerText = "Preencha todos os campos!";
+            return;
+        }
+
+        try {
+            // 2. Cria a busca no Firebase
+            const usuariosRef = collection(db, "usuarios");
+            const q = query(usuariosRef, 
+                where("usuario", "==", usuarioInput), 
+                where("senha", "==", senhaInput)
+            );
+            
+            // 3. Executa a busca
+            const querySnapshot = await getDocs(q);
+
+            // 4. Verifica o resultado
+            if (querySnapshot.empty) {
+                // Se a busca não retornou NENHUM documento, o login falhou
+                erroDiv.innerText = "Usuário ou senha incorretos!";
+            } else {
+                // Login bem-sucedido! Pega os dados do primeiro usuário encontrado
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                
+                sessionStorage.setItem("usuarioLogado", JSON.stringify({
+                    id: userDoc.id, // Pega o ID do documento
+                    nome: userData.nome,
+                    nivel: userData.nivel, // O nome do campo deve ser 'nivel'
+                    local: userData.local
+                }));
+                
+                // Redireciona para a página principal do sistema
+                window.location.href = "painel.html"; 
+            }
+        } catch (err) {
+            erroDiv.innerText = "Erro ao conectar com o servidor.";
+            console.error("Erro de login:", err);
+        }
+    }
+
+    // Adiciona o evento de clique ao botão
+    document.getElementById("loginBtn").addEventListener('click', login);
+    
+    // Permite login com a tecla Enter no campo de senha
+    document.getElementById("senha").addEventListener('keyup', function(event) {
+        if (event.key === "Enter") {
+            login();
+        }
+    });
+
+</script>
 
 </body>
 </html>
