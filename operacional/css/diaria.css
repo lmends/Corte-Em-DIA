@@ -1,233 +1,261 @@
-/* ==============================================
-   CONFIGURAÇÕES GLOBAIS E VARIÁVEIS DE COR
-   ============================================== */
+/* Variáveis de cor */
 :root {
-    --cor-principal: #007bff; /* Azul primário */
-    --cor-sucesso: #28a745;   /* Verde para agendar/salvar */
-    --cor-perigo: #dc3545;    /* Vermelho para cancelar */
-    --cor-fundo: #f4f7f6;     /* Cinza bem claro para o fundo */
-    --cor-texto: #333;       /* Cor principal do texto */
-    --cor-borda: #dee2e6;    /* Cor das bordas */
-    --cor-cabecalho-tabela: #343a40; /* Cinza escuro para cabeçalhos */
+    --cor-principal: #007bff;
+    --cor-secundaria: #0056b3;
+    --cor-sucesso: #28a745;
+    --cor-perigo: #dc3545;
+    --cor-fundo: #f9fafb;
+    --cor-texto: #212529;
+    --cor-borda: #dee2e6;
+    --cor-cabecalho-tabela: #343a40;
+    --cor-sombra: rgba(0, 0, 0, 0.1);
+}
+
+/* Reset e base */
+* {
+    box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    display: flex;
-    font-family: 'Roboto', sans-serif; /* <-- Nova fonte */
+    font-family: 'Roboto', sans-serif;
     background-color: var(--cor-fundo);
     color: var(--cor-texto);
+    display: flex;
+    min-height: 100vh;
 }
 
 .content {
-    margin-left: 240px; /* Assumindo que a sidebar tem 240px */
-    padding: 30px;
+    margin-left: 240px; /* Espaço para sidebar */
+    padding: 2.5rem 3rem;
     flex: 1;
-    height: 100vh;
     overflow-y: auto;
 }
 
-/* ==============================================
-   ESTILOS DOS FILTROS
-   ============================================== */
+/* Título */
+h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--cor-principal);
+}
+
+/* Filtros */
 .filtros-container {
     display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--cor-sombra);
+    margin-bottom: 3rem;
     align-items: flex-end;
-    gap: 20px;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--cor-borda);
 }
 
-.filtros-container .form-group {
-    margin-bottom: 0;
+.form-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+    flex: 1;
 }
 
-.filtros-container label {
-    font-size: 14px;
-    font-weight: 500;
+label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
     color: #555;
+    font-size: 0.9rem;
 }
 
-.filtros-container input[type="date"],
-.filtros-container select {
-    padding: 10px;
-    border: 1px solid var(--cor-borda);
-    border-radius: 5px;
-    font-size: 16px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+input[type="date"],
+select {
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border: 1.5px solid var(--cor-borda);
+    border-radius: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.filtros-container input[type="date"]:focus,
-.filtros-container select:focus {
+input[type="date"]:focus,
+select:focus {
     outline: none;
     border-color: var(--cor-principal);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 0 8px var(--cor-principal);
 }
 
-/* ==============================================
-   ESTILOS DA TABELA
-   ============================================== */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #ffffff;
-    font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
-    overflow: hidden; /* Garante que o border-radius funcione nos cantos */
-}
-
-th, td {
-    padding: 15px;
-    border-bottom: 1px solid var(--cor-borda);
-    text-align: left;
-    vertical-align: middle;
-}
-
-th {
-    background: var(--cor-cabecalho-tabela);
-    color: #ffffff;
-    font-weight: 500;
-    text-transform: uppercase;
-    font-size: 12px;
-}
-
-/* Efeito "Zebra" para melhor legibilidade */
-tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-
-tr:hover {
-    background-color: #e9ecef;
-}
-
-/* ==============================================
-   ESTILOS DOS BOTÕES
-   ============================================== */
-button {
-    padding: 10px 20px;
+/* Botões */
+button,
+.btn-abrir-agenda {
+    padding: 0.7rem 1.8rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 30px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-button:hover {
-    transform: translateY(-1px); /* Efeito de "levantar" */
-}
-
-.btn-agendar {
-    background-color: var(--cor-sucesso);
-    color: white;
-}
-.btn-agendar:hover {
-    background-color: #218838; /* Verde mais escuro */
+    transition: background-color 0.3s ease, transform 0.15s ease;
+    user-select: none;
+    box-shadow: 0 4px 12px var(--cor-sombra);
 }
 
 .btn-filtrar {
     background-color: var(--cor-principal);
     color: white;
 }
-.btn-filtrar:hover {
-    background-color: #0069d9; /* Azul mais escuro */
-}
 
-.btn-salvar {
-    background-color: var(--cor-principal);
-    color: white;
-}
-.btn-cancelar {
-    background-color: var(--cor-perigo);
-    color: white;
-    margin-left: 10px;
-}
-
-.btn-desmarcar {
-    background-color: var(--cor-perigo);
-    color: white;
-    padding: 8px 10px; /* Um pouco menor para caber dois */
-    font-size: 13px;
-}
-.btn-desmarcar:hover {
-    background-color: #c82333; /* Vermelho mais escuro */
-}
-
-.btn-receber {
-    background-color: #ffc107; /* Amarelo/Laranja */
-    color: #212529; /* Texto escuro para contraste */
-    padding: 8px 10px;
-    font-size: 13px;
-}
-.btn-receber:hover {
-    background-color: #e0a800; /* Amarelo mais escuro */
-}
-
-/* Container para alinhar múltiplos botões na mesma célula */
-.acoes-multiplas {
-    display: flex;
-    gap: 8px; /* Espaço entre os botões */
-    align-items: center;
+.btn-filtrar:hover,
+.btn-filtrar:focus {
+    background-color: var(--cor-secundaria);
+    transform: translateY(-2px);
+    outline: none;
 }
 
 .btn-abrir-agenda {
-    /* Estilos para parecer um botão */
-    background-color: #6c757d; /* Um cinza secundário para diferenciar */
+    background-color: #6c757d;
     color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    text-decoration: none; /* Remove o sublinhado padrão do link */
-    transition: background-color 0.2s ease, transform 0.1s ease;
-
-    /* A MÁGICA QUE ALINHA À DIREITA ACONTECE AQUI! */
-    margin-left: auto; 
+    margin-left: auto;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
 }
 
-.btn-abrir-agenda:hover {
+.btn-abrir-agenda:hover,
+.btn-abrir-agenda:focus {
     background-color: #5a6268;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    outline: none;
 }
-/* ==============================================
-   ESTILOS DO MODAL (COM ANIMAÇÃO)
-   ============================================== */
+
+/* Tabela */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px var(--cor-sombra);
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+}
+
+thead tr {
+    background-color: var(--cor-cabecalho-tabela);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+th, td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    vertical-align: middle;
+}
+
+tbody tr {
+    background: white;
+    box-shadow: 0 2px 6px var(--cor-sombra);
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+}
+
+tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+tbody tr.ocupado {
+    background-color: #ffe6e6;
+}
+
+tbody tr.ocupado:hover {
+    background-color: #ffcccc;
+}
+
+/* Ações */
+.acoes-multiplas {
+    display: flex;
+    gap: 0.5rem;
+}
+
+button.btn-agendar {
+    background-color: var(--cor-sucesso);
+    color: white;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    box-shadow: 0 3px 8px rgba(40, 167, 69, 0.5);
+}
+
+button.btn-agendar:hover,
+button.btn-agendar:focus {
+    background-color: #218838;
+    outline: none;
+    transform: translateY(-2px);
+}
+
+button.btn-desmarcar {
+    background-color: var(--cor-perigo);
+    color: white;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    box-shadow: 0 3px 8px rgba(220, 53, 69, 0.5);
+}
+
+button.btn-desmarcar:hover,
+button.btn-desmarcar:focus {
+    background-color: #c82333;
+    outline: none;
+    transform: translateY(-2px);
+}
+
+button.btn-receber {
+    background-color: #ffc107;
+    color: #212529;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    box-shadow: 0 3px 8px rgba(255, 193, 7, 0.5);
+}
+
+button.btn-receber:hover,
+button.btn-receber:focus {
+    background-color: #e0a800;
+    outline: none;
+    transform: translateY(-2px);
+}
+
+/* Modal */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(33, 37, 41, 0.6);
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    opacity: 0; /* Começa invisível para a animação */
+    z-index: 1500;
+    opacity: 0;
     transition: opacity 0.3s ease;
+}
+
+.modal-overlay.ativo {
+    display: flex;
+    opacity: 1;
 }
 
 .modal-content {
     background-color: white;
-    padding: 30px 40px;
-    border-radius: 8px;
-    width: 400px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    transform: scale(0.95); /* Começa um pouco menor para a animação */
+    padding: 2.5rem 3rem;
+    border-radius: 12px;
+    width: 420px;
+    max-width: 90vw;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    transform: scale(0.95);
     transition: transform 0.3s ease;
-}
-
-/* Faz o modal aparecer com a animação */
-.modal-overlay.ativo {
-    display: flex;
-    opacity: 1;
 }
 
 .modal-overlay.ativo .modal-content {
@@ -236,11 +264,87 @@ button:hover {
 
 .modal-content h3 {
     margin-top: 0;
-    margin-bottom: 25px;
-    font-weight: 500;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    color: var(--cor-principal);
 }
 
 .modal-actions {
-    text-align: right;
-    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+button.btn-salvar {
+    background-color: var(--cor-principal);
+    color: white;
+    padding: 0.7rem 1.8rem;
+    border-radius: 30px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.6);
+    transition: background-color 0.3s ease, transform 0.15s ease;
+}
+
+button.btn-salvar:hover,
+button.btn-salvar:focus {
+    background-color: var(--cor-secundaria);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+button.btn-cancelar {
+    background-color: var(--cor-perigo);
+    color: white;
+    padding: 0.7rem 1.8rem;
+    border-radius: 30px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.6);
+    transition: background-color 0.3s ease, transform 0.15s ease;
+}
+
+button.btn-cancelar:hover,
+button.btn-cancelar:focus {
+    background-color: #c82333;
+    outline: none;
+    transform: translateY(-2px);
+}
+
+/* Acessibilidade: esconder elementos visuais mas manter para leitores de tela */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    border: 0 !important;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+    .content {
+        margin-left: 0;
+        padding: 1.5rem 1rem;
+    }
+
+    .filtros-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-abrir-agenda {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
+
+    table {
+        font-size: 0.85rem;
+    }
+
+    th, td {
+        padding: 0.8rem 1rem;
+    }
 }
