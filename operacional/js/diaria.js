@@ -156,7 +156,7 @@ window.addEventListener('DOMContentLoaded', () => {
         carregarAgendaDiaria(dataSelecionada, profissionalSelecionado);
     });
 
-    fetch('../operacional/sidebar.html')
+    fetch('../sidebar.html')
         .then(res => res.text())
         .then(html => {
             document.getElementById('sidebarContainer').innerHTML = html;
