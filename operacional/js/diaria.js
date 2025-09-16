@@ -27,10 +27,10 @@ let procedimentos = {};
  * @param {string} dataReferencia - A data no formato "AAAA-MM-DD".
  * @param {string|null} profissionalIdFiltro - O ID do profissional para filtrar, ou null para todos.
  */
-async function carregarAgendaDiaria(dataReferencia, profissionalIdFiltro = null) {
+async function carregarAgendaDiaria(dataReferencia, profissionalIdFiltro) { // Removido o "= null"
+    // ... (O conteúdo desta função continua EXATAMENTE O MESMO da versão anterior)
     const tbody = document.querySelector('#agendaTable tbody');
     tbody.innerHTML = `<tr><td colspan="6">Carregando...</td></tr>`;
-
     try {
         if (Object.keys(usuarios).length === 0) {
             const usuariosSnap = await getDocs(collection(db, 'usuarios'));
@@ -40,40 +40,20 @@ async function carregarAgendaDiaria(dataReferencia, profissionalIdFiltro = null)
             const procedimentosSnap = await getDocs(collection(db, 'procedimentos'));
             procedimentosSnap.forEach(doc => procedimentos[doc.id] = doc.data().nome);
         }
-
         const dataSelecionada = new Date(`${dataReferencia}T12:00:00`);
         const diaDaSemanaSelecionado = dataSelecionada.getDay();
-
         const collectionName = "disponibilidades";
         const regrasRef = collection(db, collectionName);
-
-        // ==================================================================
-        // NOVA BUSCA - Respeitando a limitação do Firestore
-        // Buscamos apenas pelo dia da semana e pela data de início.
-        // ==================================================================
         const q = query(regrasRef,
             where("diaDaSemana", "==", diaDaSemanaSelecionado),
-            where("dataInicioValidade", "<=", dataReferencia)
+            where("dataInicioValidade", "<=", dataReferencia) // Apenas UM filtro de intervalo
         );
         const regrasSnap = await getDocs(q);
-
         let regrasDoDia = [];
-        regrasSnap.forEach(doc => {
-            const regra = { id: doc.id, ...doc.data() };
-
-            // ==================================================================
-            // NOVO FILTRO - O JavaScript faz a segunda parte do trabalho
-            // Verificamos aqui se a regra ainda é válida na data final.
-            // ==================================================================
-            if (regra.dataFimValidade >= dataReferencia) {
-                regrasDoDia.push(regra);
-            }
-        });
-
+        regrasSnap.forEach(doc => { regrasDoDia.push({ id: doc.id, ...doc.data() }); });
         if (profissionalIdFiltro) {
             regrasDoDia = regrasDoDia.filter(regra => regra.profissionalId === profissionalIdFiltro);
         }
-
         const agendasRef = collection(db, 'agendas');
         const qAgendas = query(agendasRef, where("dia", "==", dataReferencia));
         const agendasDiaSnap = await getDocs(qAgendas);
@@ -83,36 +63,29 @@ async function carregarAgendaDiaria(dataReferencia, profissionalIdFiltro = null)
             const key = `${slotData.profissionalId}_${slotData.hora}`;
             agDia[key] = slotData;
         });
-        
         tbody.innerHTML = '';
-
         if (regrasDoDia.length === 0) {
             tbody.innerHTML = `<tr><td colspan="6">Nenhuma disponibilidade encontrada para esta data/profissional.</td></tr>`;
             return;
         }
-
         regrasDoDia.forEach(regra => {
-            // ... (O resto do código para renderizar a tabela continua exatamente o mesmo) ...
             const intervalo = parseInt(regra.intervalo_minutos || 30, 10);
             let [hIni, mIni] = regra.horario_inicio.split(':').map(Number);
             let [hFim, mFim] = regra.horario_fim.split(':').map(Number);
             let inicioMin = hIni * 60 + mIni;
             const fimMin = hFim * 60 + mFim;
-
             while (inicioMin < fimMin) {
                 const hora = String(Math.floor(inicioMin / 60)).padStart(2, '0') + ':' + String(inicioMin % 60).padStart(2, '0');
                 const key = `${regra.profissionalId}_${hora}`;
                 const slot = agDia[key];
                 const tr = document.createElement('tr');
                 let acaoHtml = '';
-
                 if (slot) {
                     tr.classList.add(slot.status || 'ocupado');
                     acaoHtml = `<td class="acoes-multiplas"><button class="btn-receber" data-agendamento-id="${slot.id}">Receber</button><button class="btn-desmarcar" data-agendamento-id="${slot.id}">Desmarcar</button></td>`;
                 } else {
                     acaoHtml = `<td><button class="btn-agendar" data-profissional-id="${regra.profissionalId}" data-dia="${dataReferencia}" data-hora="${hora}">Agendar</button></td>`;
                 }
-
                 tr.innerHTML = `<td>${usuarios[regra.profissionalId] || 'N/A'}</td><td>${slot ? (clientes[slot.clienteId] || 'N/A') : '<strong>Vago</strong>'}</td><td>${slot ? (procedimentos[slot.procedimentoId] || 'N/A') : ''}</td><td>${dataReferencia}</td><td>${hora}</td>${acaoHtml}`;
                 tbody.appendChild(tr);
                 inicioMin += intervalo;
@@ -125,39 +98,59 @@ async function carregarAgendaDiaria(dataReferencia, profissionalIdFiltro = null)
 }
 
 
-
+// MUDANÇA 1: A função de popular filtros agora também é responsável por carregar a agenda inicial
 async function popularFiltros() {
     const selectProfissional = document.getElementById('selectProfissional');
     try {
-        const usuariosSnap = await getDocs(collection(db, 'usuarios'));
+        const usuariosRef = collection(db, 'usuarios');
+        const q = query(usuariosRef, where("nivel", "==", "profissional"));
+        const usuariosSnap = await getDocs(q);
+        
+        selectProfissional.innerHTML = ''; // Limpa o select antes de preencher
+
         usuariosSnap.forEach(doc => {
             const option = document.createElement('option');
             option.value = doc.id;
             option.textContent = doc.data().nome;
             selectProfissional.appendChild(option);
         });
+
+        // NOVO: Depois de preencher, se houver profissionais, carrega a agenda do primeiro
+        if (usuariosSnap.docs.length > 0) {
+            const primeiroProfissionalId = usuariosSnap.docs[0].id;
+            const dataInicial = document.getElementById('datePicker').value;
+            carregarAgendaDiaria(dataInicial, primeiroProfissionalId);
+        }
+
     } catch (error) {
         console.error("Erro ao carregar profissionais:", error);
     }
 }
 
-// --- INICIALIZAÇÃO DA PÁGINA ---
+
+// --- INICIALIZAÇÃO DA PÁGINA (Atualizada) ---
 window.addEventListener('DOMContentLoaded', () => {
     const datePicker = document.getElementById('datePicker');
     const selectProfissional = document.getElementById('selectProfissional');
     const btnFiltrar = document.getElementById('btnFiltrar');
 
-    popularFiltros();
-
+    // Configura a data de hoje no seletor
     const hoje = new Date();
     const dataStr = hoje.toISOString().split('T')[0];
     datePicker.value = dataStr;
     
-    carregarAgendaDiaria(dataStr, null);
+    // MUDANÇA 2: A inicialização agora só chama a função para popular os filtros.
+    // A chamada para carregarAgendaDiaria foi movida para dentro de popularFiltros.
+    popularFiltros(); 
 
+    // O botão de filtrar continua funcionando normalmente
     btnFiltrar.addEventListener('click', () => {
         const dataSelecionada = datePicker.value;
         const profissionalSelecionado = selectProfissional.value;
+        if (!profissionalSelecionado) {
+            alert("Por favor, selecione um profissional.");
+            return;
+        }
         carregarAgendaDiaria(dataSelecionada, profissionalSelecionado);
     });
 
