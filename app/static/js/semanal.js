@@ -144,7 +144,7 @@ async function carregarAgendaSemanal(semanaOffset = 0) {
 // --- INICIALIZAÇÃO DA PÁGINA ---
 window.addEventListener('DOMContentLoaded', async () => {
     // CORREÇÃO 2: O caminho para a sidebar deve ser absoluto a partir da raiz
-    fetch('../operacional/sidebar.html')
+    fetch('sidebar.html')
             .then(res => res.text())
             .then(html => {
                 document.getElementById('sidebarContainer').innerHTML = html;

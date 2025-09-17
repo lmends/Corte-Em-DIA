@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Agenda Diária - Corte em Dia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/diaria.css') }}" />
+</head>
+<body>
+    {% include 'partials/sidebar.html' %}
+
+    <main class="content" role="main">
+        <h1>Agenda Diária</h1>
+
+        <form method="GET" action="{{ url_for('agenda.agenda_diaria') }}">
+            <section class="filtros-container" aria-label="Filtros de busca">
+                <div class="form-group">
+                    <label for="datePicker">Data:</label>
+                    <input type="date" id="datePicker" name="data" value="{{ data_selecionada }}" />
+                </div>
+                <div class="form-group">
+                    <label for="selectProfissional">Profissional:</label>
+                    <select id="selectProfissional" name="profissional">
+                        {% for prof_id, prof_data in profissionais.items() %}
+                            <option value="{{ prof_id }}" {% if prof_id == profissional_selecionado %}selected{% endif %}>
+                                {{ prof_data.nome }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn-filtrar">Filtrar</button>
+                <a href="{{ url_for('agenda.abrir_agenda') }}" class="btn-abrir-agenda" role="button">Abrir Agenda</a>
+            </section>
+        </form>
+
+        <section aria-label="Tabela de agendamentos">
+            <table id="agendaTable" role="grid">
+                <thead>
+                    <tr>
+                        <th>Profissional</th>
+                        <th>Cliente</th>
+                        <th>Procedimento</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="agendaTbody">
+                    {% for slot in slots %}
+                        <tr>
+                            <td>{{ slot.profissional_nome }}</td>
+                            <td>
+                                {% if slot.status == 'vago' %}
+                                    <strong>Vago</strong>
+                                {% else %}
+                                    {{ slot.cliente_nome }}
+                                {% endif %}
+                            </td>
+                            <td>{{ slot.procedimento_nome or '' }}</td>
+                            <td>{{ slot.data }}</td>
+                            <td>{{ slot.hora }}</td>
+                            <td>
+                                {% if slot.status == 'vago' %}
+                                    <button class="btn-agendar" 
+                                            data-profissional-id="{{ slot.profissional_id }}"
+                                            data-profissional-nome="{{ slot.profissional_nome }}"
+                                            data-dia="{{ slot.data }}" 
+                                            data-hora="{{ slot.hora }}">
+                                        Agendar
+                                    </button>
+                                {% else %}
+                                    <div class="acoes-multiplas">
+                                        <button class="btn-receber" data-agendamento-id="{{ slot.agendamento_id }}">Receber</button>
+                                        <button class="btn-desmarcar" data-agendamento-id="{{ slot.agendamento_id }}">Desmarcar</button>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">Nenhuma disponibilidade encontrada para esta data/profissional.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <div id="modalAgendamento" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitulo">Novo Agendamento</h3>
+            <form id="formAgendamento" method="POST" action="{{ url_for('agenda.salvar_agendamento') }}">
+                <input type="hidden" id="modalProfissionalId" name="profissionalId" />
+                <input type="hidden" id="modalDia" name="dia" />
+                <input type="hidden" id="modalHora" name="hora" />
+                <div class="form-group">
+                    <label for="selectCliente">Cliente:</label>
+                    <select id="selectCliente" name="clienteId" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="selectProcedimento">Procedimento:</label>
+                    <select id="selectProcedimento" name="procedimentoId" required></select>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-salvar">Salvar Agendamento</button>
+                    <button type="button" id="btnCancelar" class="btn-cancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const clientes = {{ clientes | tojson }};
+        const procedimentos = {{ procedimentos | tojson }};
+    </script>
+    
+    <script type="module" src="{{ url_for('static', filename='js/diaria.js') }}"></script>
+</body>
+</html>

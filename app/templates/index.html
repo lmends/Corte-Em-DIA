@@ -394,7 +394,7 @@
       <li><a href="#" tabindex="0">Início</a></li>
       <li><a href="#features" tabindex="0">Funcionalidades</a></li>
       <li><a href="#pricing" tabindex="0">Preços</a></li>
-      <li><a href="operacional/" class="btn-cta" tabindex="0">Acessar Sistema</a></li>
+      <li><a href="{{ url_for('agenda.agenda_diaria') }}" class="btn-cta" tabindex="0">Acessar Sistema</a></li>
     </ul>
   </nav>
 </header>
@@ -403,7 +403,7 @@
   <section class="hero" role="banner" aria-label="Apresentação do Corte em Dia">
     <h1>A gestão da sua barbearia, simples e afiada.</h1>
     <p>Chega de cadernos e planilhas confusas. Com o Corte em Dia, você organiza agendas, controla horários e foca no que realmente importa: seus clientes.</p>
-    <a href="operacional/" class="btn-primary" role="button">Comece a organizar agora</a>
+    <a href="{{ url_for('agenda.agenda_diaria') }}" class="btn-primary" role="button">Comece a organizar agora</a>
   </section>
 
   <section class="features" id="features" aria-labelledby="features-title">
@@ -453,7 +453,7 @@
 
   <section class="final-cta" aria-label="Chamada final para ação">
     <h2>Pronto para deixar a desorganização no passado?</h2>
-    <a href="operacional/" class="btn-primary" role="button">Acessar minha agenda</a>
+    <a href="{{ url_for('agenda.agenda_diaria') }}" class="btn-primary" role="button">Acessar minha agenda</a>
   </section>
 </main>
 
