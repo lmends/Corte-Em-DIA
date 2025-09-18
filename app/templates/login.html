@@ -2,103 +2,96 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Corte em Dia - Login</title>
-    <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; }
-        .login-box { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.2); width: 300px; }
-        .login-box h2 { margin-bottom: 20px; text-align: center; }
-        .login-box input { width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #ccc; }
-        .login-box button { width: 100%; padding: 10px; border: none; border-radius: 4px; background: #222; color: #fff; cursor: pointer; font-size: 16px; }
-        .login-box button:hover { background: #444; }
-        .erro { color: red; text-align: center; margin-bottom: 10px; min-height: 1.2em; }
-    </style>
+    <title>Login - Corte em Dia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
-<body>
+<body class="login-page">
 
-<div class="login-box">
-    <h2>Login</h2>
-    <div id="erro" class="erro"></div>
-    <input type="text" id="usuario" placeholder="Usuário">
-    <input type="password" id="senha" placeholder="Senha">
-    <button id="loginBtn">Entrar</button>
+<div class="login-container">
+    <div class="login-box">
+        <h2>Corte em Dia</h2>
+        <p>Acesse sua agenda</p>
+        <div id="erro" class="erro"></div>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="input-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" required>
+            </div>
+            <button type="submit" id="loginBtn">Entrar</button>
+        </form>
+    </div>
 </div>
 
 <script type="module">
-    // 1. Importa as ferramentas do Firebase
+    // 1. Importa as ferramentas DOIS serviços do Firebase: Auth e Firestore
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyDtJ6dTHEOr3kl5hJeAQhnr2heDsUV1xfs",
-        authDomain: "corteemdia.firebaseapp.com",
-        projectId: "corteemdia",
-        storageBucket: "corteemdia.firebasestorage.app",
-        messagingSenderId: "142201652364",
-        appId: "1:142201652364:web:23f4dd7ea358534b2627a9",
-        measurementId: "G-G02HYCX1VN"
+    apiKey: "AIzaSyDtJ6dTHEOr3kl5hJeAQhnr2heDsUV1xfs",
+    authDomain: "corteemdia.firebaseapp.com",
+    projectId: "corteemdia",
+    storageBucket: "corteemdia.firebasestorage.app",
+    messagingSenderId: "142201652364",
+    appId: "1:142201652364:web:23f4dd7ea358534b2627a9",
+    measurementId: "G-G02HYCX1VN"
     };
-
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const auth = getAuth(app); // Serviço de Autenticação
+    const db = getFirestore(app); // Serviço de Banco de Dados (Firestore)
 
-    async function login() {
-        const usuarioInput = document.getElementById("usuario").value.trim();
-        const senhaInput = document.getElementById("senha").value.trim();
-        const erroDiv = document.getElementById("erro");
+    const loginForm = document.getElementById('loginForm');
+    const erroDiv = document.getElementById('erro');
 
-        erroDiv.innerText = "";
-
-        if (!usuarioInput || !senhaInput) {
-            erroDiv.innerText = "Preencha todos os campos!";
-            return;
-        }
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+        erroDiv.textContent = '';
 
         try {
-            // 2. Cria a busca no Firebase
-            const usuariosRef = collection(db, "usuarios");
-            const q = query(usuariosRef, 
-                where("usuario", "==", usuarioInput), 
-                where("senha", "==", senhaInput)
-            );
+            // 2. Tenta fazer o login com o Firebase Authentication
+            const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+            const user = userCredential.user;
             
-            // 3. Executa a busca
+            // 3. Se o login deu certo, busca os dados ADICIONAIS no Firestore
+            const usuariosRef = collection(db, "usuarios");
+            const q = query(usuariosRef, where("email", "==", user.email));
             const querySnapshot = await getDocs(q);
-
-            // 4. Verifica o resultado
+            
             if (querySnapshot.empty) {
-                // Se a busca não retornou NENHUM documento, o login falhou
-                erroDiv.innerText = "Usuário ou senha incorretos!";
-            } else {
-                // Login bem-sucedido! Pega os dados do primeiro usuário encontrado
-                const userDoc = querySnapshot.docs[0];
-                const userData = userDoc.data();
-                
-                sessionStorage.setItem("usuarioLogado", JSON.stringify({
-                    id: userDoc.id, // Pega o ID do documento
-                    nome: userData.nome,
-                    nivel: userData.nivel, // O nome do campo deve ser 'nivel'
-                    local: userData.local
-                }));
-                
-                // Redireciona para a página principal do sistema
-                window.location.href = "painel.html"; 
+                throw new Error("Usuário autenticado, mas não encontrado no banco de dados.");
             }
-        } catch (err) {
-            erroDiv.innerText = "Erro ao conectar com o servidor.";
-            console.error("Erro de login:", err);
-        }
-    }
+            
+            const userDoc = querySnapshot.docs[0];
+            const userData = userDoc.data();
+            
+            // 4. Salva as informações na sessão e redireciona
+            sessionStorage.setItem("usuarioLogado", JSON.stringify({
+                id: userDoc.id,
+                uid: user.uid, // ID do sistema de autenticação
+                nome: userData.nome,
+                nivel: userData.nivel,
+                email: user.email
+            }));
 
-    // Adiciona o evento de clique ao botão
-    document.getElementById("loginBtn").addEventListener('click', login);
-    
-    // Permite login com a tecla Enter no campo de senha
-    document.getElementById("senha").addEventListener('keyup', function(event) {
-        if (event.key === "Enter") {
-            login();
+            // Redireciona para a agenda diária
+            window.location.href = "{{ url_for('agenda.agenda_diaria') }}";
+
+        } catch (error) {
+            console.error("Erro de login:", error.code);
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                erroDiv.textContent = "Email ou senha incorretos.";
+            } else {
+                erroDiv.textContent = "Ocorreu um erro ao tentar fazer login.";
+            }
         }
     });
-
 </script>
 
 </body>

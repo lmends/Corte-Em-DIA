@@ -41,6 +41,11 @@ def index():
     """Renderiza a página inicial (landing page)."""
     return render_template('index.html')
 
+@agenda_bp.route('/login')
+def login():
+    """Renderiza a página de login."""
+    return render_template('login.html')
+
 
 @agenda_bp.route('/diaria')
 def agenda_diaria():

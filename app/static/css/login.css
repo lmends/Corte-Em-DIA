@@ -1,0 +1,100 @@
+:root {
+    --cor-primaria: #ffcc00; /* Amarelo Corte em Dia */
+    --cor-fundo: #1f1f1f;
+    --cor-fundo-gradiente: #343a40;
+    --cor-texto-claro: #ffffff;
+    --cor-texto-escuro: #333;
+    --cor-perigo: #dc3545;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif; /* Garanta que a fonte está no seu HTML */
+    background: linear-gradient(135deg, var(--cor-fundo) 0%, var(--cor-fundo-gradiente) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.login-container {
+    perspective: 1000px; /* Efeito de profundidade para a rotação */
+}
+
+.login-box {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    width: 350px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: rotateY(-3deg);
+    transition: transform 0.5s ease;
+}
+
+.login-box:hover {
+    transform: rotateY(0deg);
+}
+
+.login-box h2 {
+    color: var(--cor-primaria);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.login-box p {
+    margin-bottom: 25px;
+    color: #555;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: var(--cor-texto-escuro);
+    font-weight: 500;
+}
+
+.login-box input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--cor-primaria);
+    color: var(--cor-fundo);
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.login-box button:hover {
+    background-color: #e6b800;
+    transform: translateY(-2px);
+}
+
+.erro {
+    min-height: 20px;
+    color: var(--cor-perigo);
+    font-weight: 500;
+    font-size: 14px;
+}
