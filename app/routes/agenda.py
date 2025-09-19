@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from datetime import datetime, timedelta
+from flask_login import login_required, current_user
+import requests
 
 # Importa a instância do banco de dados 'db' do nosso __init__.py principal
 from app import db
@@ -41,13 +43,13 @@ def index():
     """Renderiza a página inicial (landing page)."""
     return render_template('index.html')
 
-@agenda_bp.route('/login')
-def login():
-    """Renderiza a página de login."""
-    return render_template('login.html')
-
+@agenda_bp.route('/painel')
+@login_required
+def painel():
+    return render_template('painel.html', nome_usuario=current_user.nome)
 
 @agenda_bp.route('/diaria')
+@login_required
 def agenda_diaria():
     try:
         data_str = request.args.get('data', default=datetime.now().strftime('%Y-%m-%d'))
@@ -120,6 +122,11 @@ def salvar_agendamento():
     except Exception as e:
         print(f"Erro ao salvar agendamento: {e}")
         return "Ocorreu um erro ao salvar", 500
+
+
+
+
+
 
 # --- ROTAS DE PLACEHOLDER ---
 @agenda_bp.route('/abrir-agenda')

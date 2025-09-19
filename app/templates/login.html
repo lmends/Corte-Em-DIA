@@ -27,11 +27,9 @@
 </div>
 
 <script type="module">
-    // 1. Importa as ferramentas DOIS serviços do Firebase: Auth e Firestore
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
-
+    
     const firebaseConfig = {
     apiKey: "AIzaSyDtJ6dTHEOr3kl5hJeAQhnr2heDsUV1xfs",
     authDomain: "corteemdia.firebaseapp.com",
@@ -42,54 +40,51 @@
     measurementId: "G-G02HYCX1VN"
     };
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app); // Serviço de Autenticação
-    const db = getFirestore(app); // Serviço de Banco de Dados (Firestore)
+    const auth = getAuth(app);
 
     const loginForm = document.getElementById('loginForm');
     const erroDiv = document.getElementById('erro');
+    const loginBtn = document.getElementById('loginBtn');
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = document.getElementById('email').value;
-        const senha = document.getElementById('senha').value;
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Entrando...';
         erroDiv.textContent = '';
 
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+
         try {
-            // 2. Tenta fazer o login com o Firebase Authentication
+            // 1. Autentica no Firebase (no navegador)
             const userCredential = await signInWithEmailAndPassword(auth, email, senha);
             const user = userCredential.user;
-            
-            // 3. Se o login deu certo, busca os dados ADICIONAIS no Firestore
-            const usuariosRef = collection(db, "usuarios");
-            const q = query(usuariosRef, where("email", "==", user.email));
-            const querySnapshot = await getDocs(q);
-            
-            if (querySnapshot.empty) {
-                throw new Error("Usuário autenticado, mas não encontrado no banco de dados.");
+
+            // 2. Pega o "crachá" (ID Token)
+            const idToken = await user.getIdToken();
+
+            // 3. Envia o crachá para o nosso backend Flask para criar a sessão
+            const response = await fetch("{{ url_for('auth.session_login') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ idToken: idToken }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Falha ao criar a sessão no servidor.');
             }
             
-            const userDoc = querySnapshot.docs[0];
-            const userData = userDoc.data();
-            
-            // 4. Salva as informações na sessão e redireciona
-            sessionStorage.setItem("usuarioLogado", JSON.stringify({
-                id: userDoc.id,
-                uid: user.uid, // ID do sistema de autenticação
-                nome: userData.nome,
-                nivel: userData.nivel,
-                email: user.email
-            }));
-
-            // Redireciona para a agenda diária
-            window.location.href = "{{ url_for('agenda.agenda_diaria') }}";
+            // 4. Se a sessão no backend foi criada com sucesso, redireciona
+            const nextUrl = new URLSearchParams(window.location.search).get('next') || "{{ url_for('agenda.painel') }}";
+            window.location.href = nextUrl;
 
         } catch (error) {
-            console.error("Erro de login:", error.code);
-            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-                erroDiv.textContent = "Email ou senha incorretos.";
-            } else {
-                erroDiv.textContent = "Ocorreu um erro ao tentar fazer login.";
-            }
+            console.error("Erro de login:", error);
+            erroDiv.textContent = "Email ou senha incorretos.";
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Entrar';
         }
     });
 </script>

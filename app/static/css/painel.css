@@ -1,0 +1,186 @@
+/* ==============================================
+   PAINEL.CSS - TEMA PROFISSIONAL E INDEPENDENTE
+   ============================================== */
+
+/* 1. VARIÁVEIS E ESTILOS GLOBAIS
+   (Trazido do style.css para independência)
+   ============================================== */
+:root {
+    --cor-fundo-painel: #f0f2f5;
+    --cor-surface: #ffffff;
+    --cor-principal: #0d6efd;
+    --cor-sucesso: #198754;
+    --cor-aviso: #ffc107;
+    --cor-secundaria: #6c757d;
+    --cor-texto-primario: #212529;
+    --cor-texto-secundario: #6c757d;
+    --cor-borda: #dee2e6;
+    --sombra-suave: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.07);
+    --sombra-media: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif; /* Garanta que a fonte está no seu HTML */
+    background-color: var(--cor-fundo-painel);
+    color: var(--cor-texto-primario);
+    display: flex;
+}
+
+.content {
+    margin-left: 260px;
+    padding: 30px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* ==============================================
+   2. ESTILOS ESPECÍFICOS DO PAINEL
+   ============================================== */
+
+.header {
+    margin-bottom: 2rem;
+    flex-shrink: 0;
+}
+.content h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+.boas-vindas {
+    font-size: 1.1rem;
+    color: var(--cor-texto-secundario);
+}
+
+/* KPI Cards */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    flex-shrink: 0;
+}
+
+.stat-card {
+    background: var(--cor-surface);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    border: 1px solid var(--cor-borda);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--sombra-media);
+}
+.card-icon {
+    font-size: 2rem;
+    padding: 1rem;
+    border-radius: 50%;
+    color: #fff;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+}
+.icon-agendamentos { background-color: var(--cor-principal); }
+.icon-faturamento { background-color: var(--cor-sucesso); }
+.icon-previsao { background-color: var(--cor-secundaria); }
+.icon-ticket { background-color: var(--cor-aviso); color: var(--cor-texto-primario); }
+.card-info { display: flex; flex-direction: column; }
+.card-valor { font-size: 2rem; font-weight: 700; line-height: 1.1; }
+.card-titulo { font-size: 0.9rem; color: var(--cor-texto-secundario); font-weight: 500; }
+
+/* Grid Principal (Gráficos e Tabelas) */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.main-column, .side-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.chart-container, .table-container {
+    background: var(--cor-surface);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
+}
+.chart-container h3, .table-container h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+.side-column .chart-container { flex-grow: 1; min-height: 250px; }
+.side-column .table-container { flex-shrink: 0; }
+
+.tabela-desempenho {
+    width: 100%;
+    border-collapse: collapse;
+}
+.tabela-desempenho th, .tabela-desempenho td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--cor-borda);
+    vertical-align: middle;
+}
+.tabela-desempenho thead th {
+    font-size: 0.8rem;
+    color: var(--cor-texto-secundario);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom-width: 2px;
+}
+.tabela-desempenho tbody tr:last-child td {
+    border-bottom: none;
+}
+.barra-progresso {
+    width: 100%;
+    min-width: 120px;
+    background-color: #e9ecef;
+    border-radius: 1rem;
+    height: 22px;
+    overflow: hidden;
+}
+.progresso {
+    background: linear-gradient(90deg, var(--cor-sucesso), #52b788);
+    height: 100%;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Responsividade */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0; /* Para quando a sidebar for escondida em telas menores */
+    }
+}
