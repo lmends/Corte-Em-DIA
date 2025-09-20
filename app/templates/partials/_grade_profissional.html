@@ -1,0 +1,30 @@
+{% set dias_da_semana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"] %}
+
+{% for i in range(7) %}
+    <div class="dia-coluna">
+        <div class="dia-header">{{ dias_da_semana[i] }}</div>
+        <div class="dia-body">
+            
+            {% set regras_do_dia_atual = regras_por_dia[i|string] %}
+
+            {% if regras_do_dia_atual %}
+                {% for regra_item in regras_do_dia_atual %}
+                    <div class="slot-definido">
+                        <div class="slot-horario">Das: {{ regra_item.horario_inicio }} às {{ regra_item.horario_fim }}</div>
+                        <div class="slot-intervalo">Intervalo: {{ regra_item.intervalo_minutos }} min</div>
+                        <div class="slot-validade">
+                            Vigente de {{ regra_item.dataInicioValidade | format_date }}
+                            até {{ regra_item.dataFimValidade | format_date }}
+                        </div>
+                        <div class="slot-acoes">
+                            <button class="btn-acao-slot btn-excluir-regra" title="Excluir" data-id="{{ regra_item.id }}">❌</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="slot-vazio">Nenhum horário definido</div>
+            {% endif %}
+        </div>
+        <button class="btn-incluir-horario" data-dia-index="{{ i }}" data-dia-nome="{{ dias_da_semana[i] }}">+</button>
+    </div>
+{% endfor %}

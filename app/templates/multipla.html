@@ -3,27 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <title>Agenda Múltipla - Corte em Dia</title>
-    <link rel="stylesheet" href="css/multipla.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multipla.css') }}">
+    
+    <style>
+        /* Estilos específicos para a Agenda Múltipla */
+        .profissionais-container {
+            display: grid;
+            /* Cria colunas responsivas com largura mínima de 320px */
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .tabela-profissional {
+            box-shadow: var(--sombra-suave);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--cor-borda);
+        }
+
+        .tabela-profissional th.profissional-header {
+            background-color: var(--cor-principal);
+            text-align: center;
+            font-size: 1rem;
+            padding: 0.8rem;
+        }
+        .tabela-profissional th, .tabela-profissional td {
+            padding: 0.6rem;
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
 <body>
-    <div id="sidebarContainer"></div>
+    {% include 'partials/sidebar.html' %}
 
-    <div class="content">
+    <main class="content">
         <h1>Agenda Múltipla</h1>
 
-        <div class="filtros-container">
-            <div class="form-group">
-                <label for="datePicker">Data:</label>
-                <input type="date" id="datePicker">
+        <form method="GET" action="{{ url_for('agenda.agenda_multipla') }}">
+            <div class="filtros-container">
+                <div class="form-group">
+                    <label for="datePicker">Data:</label>
+                    <input type="date" id="datePicker" name="data" value="{{ data_selecionada }}">
+                </div>
+                <button type="submit" class="btn-filtrar">Filtrar</button>
             </div>
-            <button id="btnFiltrar" class="btn-filtrar">Filtrar</button>
-        </div>
-
+        </form>
+        
         <div class="profissionais-container" id="agendaMultiplaContainer">
-            <p>Selecione uma data e clique em filtrar para ver as agendas.</p>
+            {% if agendas %}
+                {% for prof_id, dados in agendas.items() %}
+                    <table class="tabela-profissional">
+                        <thead>
+                            <tr><th colspan="3" class="profissional-header">{{ dados.nome }}</th></tr>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Cliente</th>
+                                <th>Procedimento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for slot in dados.slots %}
+                                <tr>
+                                    <td>{{ slot.hora }}</td>
+                                    <td>
+                                        {% if slot.status == 'vago' %}
+                                            <strong>Vago</strong>
+                                        {% else %}
+                                            {{ slot.cliente }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ slot.procedimento or '' }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endfor %}
+            {% else %}
+                <p>Nenhum profissional com agenda ou disponibilidade para esta data.</p>
+            {% endif %}
         </div>
-    </div>
+    </main>
 
-    <script type="module" src="js/multipla.js"></script>
+
+    <script>
+
+        function inicializarSidebar() {
+            // Lógica para o menu dropdown
+            document.querySelectorAll('.sidebar li.has-submenu').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const submenu = item.nextElementSibling;
+                    if (submenu && submenu.classList.contains('submenu')) {
+                        submenu.classList.toggle('open');
+                        submenu.hidden = !submenu.classList.contains('open');
+                        item.classList.toggle('open');
+                    }
+                });
+            });
+
+            // Lógica para o botão de logout
+            const logoutButton = document.getElementById('logoutBtn');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => {
+                    // Futuramente, chamar uma rota de logout no Flask
+                    console.log("Logout clicado");
+                    window.location.href = "/"; // Redireciona para a página de login/inicial
+                });
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarSidebar(); // Supondo que a função esteja no sidebar.js
+        });
+    </script>
 </body>
 </html>

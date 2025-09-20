@@ -27,7 +27,8 @@ body {
 
 .content {
     margin-left: 240px; /* Espaço para sidebar */
-    padding: 2.5rem 3rem;
+    padding-left: 2.5rem;
+    padding-right: 3rem;
     flex: 1;
     overflow-y: auto;
 }

@@ -1,0 +1,38 @@
+<div id="modalIncluirGrade" class="modal-overlay">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Incluir uma grade</h3>
+                <button type="button" id="btnFecharModal" class="btn-fechar-modal">×</button>
+            </div>
+            <form id="formIncluirGrade" method="POST" action="{{ url_for('agenda.salvar_regra') }}">
+                <input type="hidden" id="profissionalIdHidden" name="profissionalId">
+
+                <div class="weekdays-selector">
+                    <label>Selecione os dias da semana para a grade:</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="diasDaSemana" id="dia-0" value="0"><label for="dia-0">Dom</label>
+                        <input type="checkbox" name="diasDaSemana" id="dia-1" value="1"><label for="dia-1">Seg</label>
+                        <input type="checkbox" name="diasDaSemana" id="dia-2" value="2"><label for="dia-2">Ter</label>
+                        <input type="checkbox" name="diasDaSemana" id="dia-3" value="3"><label for="dia-3">Qua</label>
+                        <input type="checkbox" name="diasDaSemana" id="dia-4" value="4"><label for="dia-4">Qui</label>
+                        <input type="checkbox" name="diasDaSemana" id="dia-5" value="5"><label for="dia-5">Sex</label>
+                        <input type="checkbox" name="diasDaSemana" id="dia-6" value="6"><label for="dia-6">Sáb</label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label for="horaInicial">Hora inicial *</label><input type="time" name="horaInicial" required></div>
+                    <div class="form-group"><label for="horaFinal">Hora final *</label><input type="time" name="horaFinal" required></div>
+                    <div class="form-group"><label for="intervalo">Intervalo (min) *</label><input type="number" name="intervalo" value="30" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label for="dataInicio">Vigente desde *</label><input type="date" name="dataInicio" required></div>
+                    <div class="form-group"><label for="dataFim">Até *</label><input type="date" name="dataFim" required></div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="btnCancelarInclusao" class="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>

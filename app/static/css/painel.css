@@ -28,13 +28,10 @@ body {
 }
 
 .content {
-    margin-left: 260px;
-    padding: 30px;
+    margin-left: 240px;
+    padding-left: 2.5rem;
+    padding-right: 3rem;
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    box-sizing: border-box;
     overflow-y: auto;
 }
 
@@ -130,7 +127,7 @@ body {
     font-size: 1.25rem;
     font-weight: 600;
 }
-.side-column .chart-container { flex-grow: 1; min-height: 250px; }
+.side-column .chart-container { flex-grow: 1; }
 .side-column .table-container { flex-shrink: 0; }
 
 .tabela-desempenho {

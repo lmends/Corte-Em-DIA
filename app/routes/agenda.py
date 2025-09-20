@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from datetime import datetime, timedelta
 from flask_login import login_required, current_user
 import requests
+import calendar
 
 # Importa a instância do banco de dados 'db' do nosso __init__.py principal
 from app import db
+from google.cloud.firestore_v1.base_query import FieldFilter
 
 # Cria a Blueprint
 agenda_bp = Blueprint(
@@ -129,14 +131,165 @@ def salvar_agendamento():
 
 
 # --- ROTAS DE PLACEHOLDER ---
-@agenda_bp.route('/abrir-agenda')
+@agenda_bp.route('/abrir-agenda', methods=['GET'])
+@login_required
 def abrir_agenda():
-    return render_template('abrir_agenda.html') # Você precisará criar a lógica para esta página
+    """Exibe a página de gerenciamento da grade de horários."""
+    try:
+        # Busca apenas os profissionais para popular o dropdown
+        usuarios, _, _ = buscar_dados_apoio()
+        profissionais = {uid: udata for uid, udata in usuarios.items() if udata.get('nivel') == 'profissional'}
+        
+        return render_template('abrir_agenda.html', profissionais=profissionais)
+    except Exception as e:
+        print(f"Erro ao carregar a página de abrir agenda: {e}")
+        # Idealmente, renderizar uma página de erro aqui
+        return "Ocorreu um erro.", 500
+
+
+@agenda_bp.route('/salvar-regra', methods=['POST'])
+@login_required
+def salvar_regra():
+    try:
+        profissional_id = request.form.get('profissionalId')
+        dias_selecionados = request.form.getlist('diasDaSemana')
+        nova_regra_base = {"profissionalId": profissional_id, "horario_inicio": request.form.get('horaInicial'), "horario_fim": request.form.get('horaFinal'), "intervalo_minutos": int(request.form.get('intervalo')), "dataInicioValidade": request.form.get('dataInicio'), "dataFimValidade": request.form.get('dataFim')}
+        batch = db.batch()
+        regras_collection = db.collection('disponibilidades')
+        for dia_str in dias_selecionados:
+            regra_completa = {**nova_regra_base, "diaDaSemana": int(dia_str)}
+            novo_doc_ref = regras_collection.document()
+            batch.set(novo_doc_ref, regra_completa)
+        batch.commit()
+        return redirect(url_for('agenda.abrir_agenda'))
+    except Exception as e:
+        print(f"Erro ao salvar regra de horário: {e}")
+        return render_template('error.html', error_message=f"Ocorreu um erro ao salvar a regra: {e}"), 500
+
+
+@agenda_bp.app_template_filter()
+def format_date(value):
+    """Filtro Jinja2 para formatar data AAAA-MM-DD para DD/MM/AAAA."""
+    try:
+        return datetime.strptime(value, '%Y-%m-%d').strftime('%d/%m/%Y')
+    except (ValueError, TypeError):
+        return value
+
+@agenda_bp.route('/obter_grade_profissional')
+@login_required
+def obter_grade_profissional():
+    profissional_id = request.args.get('profissionalId')
+    data_inicio_str = request.args.get('data_inicio')
+    data_fim_str = request.args.get('data_fim')
+
+    if not all([profissional_id, data_inicio_str, data_fim_str]):
+        return "", 204
+
+    try:
+        regras_ref = db.collection('disponibilidades')
+        
+        q = regras_ref.where(filter=FieldFilter("profissionalId", "==", profissional_id)) \
+                      .where(filter=FieldFilter("dataInicioValidade", "<=", data_fim_str))
+        
+        regras_snap = q.stream()
+        
+        regras_do_periodo = []
+        for doc in regras_snap:
+            regra = { "id": doc.id, **doc.to_dict() }
+            if regra.get('dataFimValidade', '1900-01-01') >= data_inicio_str:
+                regras_do_periodo.append(regra)
+
+        regras_por_dia = {str(i): [] for i in range(7)}
+        for regra_valida in regras_do_periodo:
+            dia_da_semana = str(regra_valida.get('diaDaSemana', -1))
+            if dia_da_semana in regras_por_dia:
+                regras_por_dia[dia_da_semana].append(regra_valida)
+        
+        return render_template('partials/_grade_profissional.html', regras_por_dia=regras_por_dia)
+    
+    except Exception as e:
+        print(f"Erro ao obter grade do profissional: {e}")
+        return f"<p>Erro ao carregar a grade de horários: {e}</p>", 500
+
+@agenda_bp.route('/excluir-regra/<regra_id>', methods=['DELETE'])
+@login_required
+def excluir_regra(regra_id):
+    """Recebe um ID e apaga a regra de disponibilidade correspondente."""
+    print(f"Recebida solicitação para excluir a regra: {regra_id}")
+    try:
+        # Aponta para o documento específico e o deleta
+        db.collection('disponibilidades').document(regra_id).delete()
+
+        # Retorna uma resposta de sucesso em formato JSON
+        return jsonify({"status": "success", "message": "Regra excluída com sucesso."}), 200
+
+    except Exception as e:
+        print(f"Erro ao excluir regra: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 
 @agenda_bp.route('/semanal')
 def agenda_semanal():
     return "Página da Agenda Semanal em construção", 200
 
 @agenda_bp.route('/multipla')
+@login_required
 def agenda_multipla():
-    return "Página da Agenda Múltipla em construção", 200
+    try:
+        data_str = request.args.get('data', default=datetime.now().strftime('%Y-%m-%d'))
+        
+        usuarios, clientes, procedimentos = buscar_dados_apoio()
+        
+        data_selecionada = datetime.strptime(data_str, '%Y-%m-%d')
+        dia_da_semana = (data_selecionada.weekday() + 1) % 7
+
+        # 1. Busca todas as regras válidas para o dia selecionado
+        regras_query = db.collection('disponibilidades').where(filter=FieldFilter("diaDaSemana", "==", dia_da_semana)).where(filter=FieldFilter("dataInicioValidade", "<=", data_str))
+        regras_snap = regras_query.stream()
+        regras_validas = [doc.to_dict() for doc in regras_snap if doc.to_dict().get('dataFimValidade', '1900-01-01') >= data_str]
+
+        # 2. Busca todos os agendamentos para o dia
+        agendamentos_query = db.collection('agendas').where('dia', '==', data_str).stream()
+        
+        # 3. Organiza os dados por profissional
+        agenda_por_profissional = {}
+        
+        # Popula com as regras para criar os slots
+        for regra in regras_validas:
+            prof_id = regra['profissionalId']
+            if prof_id not in agenda_por_profissional:
+                agenda_por_profissional[prof_id] = {'nome': usuarios.get(prof_id, {}).get('nome', 'N/A'), 'slots': []}
+            
+            intervalo = timedelta(minutes=regra.get('intervalo_minutos', 30))
+            hora_inicio = datetime.strptime(regra['horario_inicio'], '%H:%M')
+            hora_fim = datetime.strptime(regra['horario_fim'], '%H:%M')
+            hora_atual = hora_inicio
+            while hora_atual < hora_fim:
+                agenda_por_profissional[prof_id]['slots'].append({
+                    "hora": hora_atual.strftime('%H:%M'),
+                    "status": "vago"
+                })
+                hora_atual += intervalo
+
+        # Preenche os slots com os agendamentos
+        for doc in agendamentos_query:
+            agendamento = doc.to_dict()
+            prof_id = agendamento['profissionalId']
+            if prof_id in agenda_por_profissional:
+                # Encontra o slot correspondente na lista do profissional
+                slot_correspondente = next((slot for slot in agenda_por_profissional[prof_id]['slots'] if slot['hora'] == agendamento['hora']), None)
+                if slot_correspondente:
+                    slot_correspondente['status'] = 'ocupado'
+                    slot_correspondente['cliente'] = clientes.get(agendamento.get('clienteId'), {}).get('nome', 'N/A')
+                    slot_correspondente['procedimento'] = procedimentos.get(agendamento.get('procedimentoId'), {}).get('nome', 'N/A')
+
+        # Ordena os slots de cada profissional por hora
+        for prof_id in agenda_por_profissional:
+            agenda_por_profissional[prof_id]['slots'].sort(key=lambda x: x['hora'])
+
+        return render_template('multipla.html', data_selecionada=data_str, agendas=agenda_por_profissional)
+
+    except Exception as e:
+        print(f"ERRO GERAL NA ROTA /multipla: {e}")
+        return "Ocorreu um erro ao carregar a agenda múltipla.", 500

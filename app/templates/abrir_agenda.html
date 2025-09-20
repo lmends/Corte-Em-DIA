@@ -3,83 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Grade de Horários - Corte em Dia</title>
-    <link rel="stylesheet" href="css/abrir-agenda.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/abrir_agenda.css') }}">
 </head>
 <body>
-    <div id="sidebarContainer"></div>
+    {% include 'partials/sidebar.html' %}
 
     <div class="content">
         <h1>Grade de Horários</h1>
         <div class="form-container">
-            <div class="filtros-container" style="justify-content: space-between;">
+            <div class="filtros-container">
                 <div class="form-group">
-                    <label for="selectProfissional">Visualizar grade do profissional:</label>
-                    <select id="selectProfissional"></select>
+                    <label for="selectProfissional">Profissional:</label>
+                    <select id="selectProfissional">
+                        <option value="">Selecione...</option>
+                        {% for prof_id, prof_data in profissionais.items() %}
+                            <option value="{{ prof_id }}">{{ prof_data.nome }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <button id="btnAbrirModalInclusao" class="btn-principal">Incluir Grade</button>
+                <div class="form-group">
+                    <label for="dataInicioFiltro">Período de:</label>
+                    <input type="date" id="dataInicioFiltro">
+                </div>
+                <div class="form-group">
+                    <label for="dataFimFiltro">Até:</label>
+                    <input type="date" id="dataFimFiltro">
+                </div>
+                <button id="btnFiltrarGrade" class="btn-filtrar">Buscar</button>
+                <button id="btnAbrirModalInclusao" class="btn-principal" style="margin-left: auto;">Incluir Grade</button>
             </div>
 
-            <div id="gradeVigenteContainer" class="grade-vigente-container"></div>
+            <div id="gradeVigenteContainer" class="grade-vigente-container">
+                <p style="width: 500px;">Selecione um profissional e um período para ver a grade de horários.</p>
+            </div>
         </div>
     </div>
 
-    <div id="modalIncluirGrade" class="modal-overlay">
-        <div class="modal-content modal-lg">
-            <div class="modal-header">
-                <h3>Incluir uma grade</h3>
-                <button id="btnFecharModal" class="btn-fechar-modal">×</button>
-            </div>
-            <form id="formIncluirGrade">
-                <div class="weekdays-selector">
-                    <label>Selecione os dias da semana para a grade:</label>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="dia-0" value="0"><label for="dia-0">Dom</label>
-                        <input type="checkbox" id="dia-1" value="1"><label for="dia-1">Seg</label>
-                        <input type="checkbox" id="dia-2" value="2"><label for="dia-2">Ter</label>
-                        <input type="checkbox" id="dia-3" value="3"><label for="dia-3">Qua</label>
-                        <input type="checkbox" id="dia-4" value="4"><label for="dia-4">Qui</label>
-                        <input type="checkbox" id="dia-5" value="5"><label for="dia-5">Sex</label>
-                        <input type="checkbox" id="dia-6" value="6"><label for="dia-6">Sáb</label>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="horaInicial">Hora inicial *</label>
-                        <input type="time" id="horaInicial" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="horaFinal">Hora final *</label>
-                        <input type="time" id="horaFinal" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="intervalo">Tempo de atendimento (min) *</label>
-                        <input type="number" id="intervalo" value="30" required>
-                    </div>
-                </div>
-                <div class="form-row">
-
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="dataInicio">Vigente desde *</label>
-                        <input type="date" id="dataInicio" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="dataFim">Até *</label>
-                        <input type="date" id="dataFim" required>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" id="btnCancelarInclusao" class="btn-cancelar">Cancelar</button>
-                    <button type="submit" class="btn-salvar">Confirmar</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    {% include 'partials/_modal_incluir_grade.html' %}
     
-    <script type="module" src="js/abrir-agenda.js"></script>
+
+    <script type="module" src="{{ url_for('static', filename='js/abrir_agenda.js') }}"></script>
 </body>
 </html>

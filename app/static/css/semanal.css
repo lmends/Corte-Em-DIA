@@ -24,9 +24,9 @@ body {
 
 .content {
     margin-left: 240px;
-    padding: 30px;
+    padding-left: 2.5rem;
+    padding-right: 3rem;
     flex: 1;
-    height: 100vh;
     overflow-y: auto;
 }
 
