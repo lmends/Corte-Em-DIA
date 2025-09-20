@@ -30,63 +30,15 @@ body {
     display: flex;
 }
 
-/* ==============================================
-   2. SIDEBAR (Seu código, integrado e limpo)
-   ============================================== */
-.sidebar {
-    width: 260px;
-    background: var(--cor-fundo-dark);
-    color: var(--cor-texto-light);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    box-sizing: border-box;
-    position: fixed;
-    top: 0;
-    left: 0;
-    box-shadow: 3px 0 15px rgba(0,0,0,0.2);
-}
-.sidebar h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 1.8em;
-    color: var(--cor-primaria);
-    font-weight: 700;
-}
-.sidebar ul { list-style: none; padding: 0; margin: 0; }
-.sidebar li {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.25s ease, color 0.25s ease;
-    font-weight: 600;
-}
-.sidebar li:hover {
-    background-color: var(--cor-hover-dark);
-    color: var(--cor-primaria);
-}
-.sidebar li.active {
-    background-color: var(--cor-primaria);
-    color: var(--cor-fundo-dark);
-}
-.sidebar li .icon { margin-right: 12px; fill: currentColor; width: 20px; height: 20px; }
-.sidebar li.has-submenu { justify-content: space-between; }
-.sidebar li.has-submenu .arrow { transition: transform 0.3s ease; }
-.sidebar li.has-submenu.open .arrow { transform: rotate(90deg); }
-.sidebar ul.submenu { list-style: none; padding-left: 40px; max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
-.sidebar ul.submenu.open { max-height: 500px; }
-.sidebar ul.submenu li { padding: 8px 0; }
 
 /* ==============================================
    3. LAYOUT E COMPONENTES PRINCIPAIS
    ============================================== */
 .content {
-    margin-left: 260px;
-    padding: 40px;
+    margin-left: 240px;
+    padding-left: 2.5rem;
+    padding-right: 3rem;
+    padding-bottom: 2.5rem;
     flex: 1;
     overflow-y: auto;
 }
@@ -173,7 +125,7 @@ button:hover, .btn:hover {
 .btn-abrir-agenda { margin-left: auto; }
 
 /* ==============================================
-   TABELAS
+   ESTILO UNIFICADO PARA TODAS AS TABELAS
    ============================================== */
 table {
     width: 100%;
@@ -182,24 +134,46 @@ table {
     font-size: 14px;
     box-shadow: var(--sombra-suave);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: hidden; /* Garante que o raio da borda seja aplicado */
+    border: 1px solid var(--cor-borda);
 }
+
+/* Estilo para todas as células */
 th, td {
     padding: 15px;
-    border-bottom: 1px solid var(--cor-borda);
     text-align: left;
     vertical-align: middle;
+    border-bottom: 1px solid var(--cor-borda);
 }
-th {
+
+/* Remove a borda da última linha para um visual mais limpo */
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* Efeito de hover nas linhas do corpo da tabela */
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+
+/* --- ESTILOS ESPECÍFICOS PARA CABEÇALHOS (THEAD) --- */
+
+/* Cabeçalho padrão (ex: Hora, Cliente, Procedimento) */
+thead th {
     background: var(--cor-fundo-dark);
-    color: var(--cor-primaria);
+    color: var(--cor-primaria); /* Texto dourado */
     font-weight: 600;
     text-transform: uppercase;
     font-size: 12px;
 }
-tr:last-child td {
-    border-bottom: none;
-}
-tr:hover {
-    background-color: #f1f1f1;
+
+/* Cabeçalho do Profissional na Agenda Múltipla */
+thead th.profissional-header {
+    background-color: var(--cor-primaria); /* Fundo dourado */
+    color: var(--cor-fundo-dark); /* Texto escuro */
+    text-align: center;
+    font-size: 1rem;
+    text-transform: none;
+    font-weight: bold; /* Remove o uppercase para este cabeçalho */
 }
