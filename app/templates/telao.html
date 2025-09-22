@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Atendimento - Corte em Dia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/telao.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="telao-container">
+        <header class="fila-container">
+            <div class="card-atendimento">
+                <div class="card-header">
+                    <h2>Em Atendimento</h2>
+                    <div class="profissional-info">
+                        <img src="https://i.pravatar.cc/50?u=joao" alt="Foto do Profissional">
+                        <span>João</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="cliente-nome">Carlos Silva</p>
+                    <p class="servico-nome">Corte Disfarçado + Barba</p>
+                </div>
+                <div class="card-footer">
+                    <div id="timer-display" class="timer">Atendendo há 0 minutos</div>
+                    <div class="botoes-controle">
+                        <button id="btnIniciar">▶ Iniciar</button>
+                        <button id="btnFinalizar">✓ Finalizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-proximo">
+                <div class="card-header">
+                    <h2>Próximo da Fila</h2>
+                </div>
+                <div class="card-body">
+                    <p class="cliente-nome">Mariana Costa</p>
+                    <p class="servico-nome">Pigmentação</p>
+                    <p class="horario">às 14:30</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="slideshow-container">
+            <div id="slideshow-overlay">
+                <h3 id="slideshow-titulo">Corte Degradê Navalhado</h3>
+            </div>
+            <img src="https://images.unsplash.com/photo-1599387737838-66a35678a1a2?q=80&w=1760" id="slideshow-image" alt="Foto de um corte de cabelo">
+        </main>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/telao.js') }}"></script>
+</body>
+</html>

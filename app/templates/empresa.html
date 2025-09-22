@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão da Empresa - Corte em Dia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/empresa.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'partials/sidebar.html' %}
+
+    <main class="content">
+        <h1>Gestão da Empresa</h1>
+        <p class="subtitulo">Gerencie as configurações centrais do seu negócio.</p>
+
+        <div class="settings-grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🏢</span>
+                    <h2>Unidades</h2>
+                </div>
+                <div class="card-body">
+                    <p>Crie e edite as informações das suas barbearias, como endereço e telefone.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-primary">Gerenciar Unidades</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">✂️</span>
+                    <h2>Profissionais</h2>
+                </div>
+                <div class="card-body">
+                    <p>Adicione, remova e gerencie os níveis de acesso dos seus colaboradores.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-primary">Gerenciar Profissionais</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">💲</span>
+                    <h2>Tabelas de Preços</h2>
+                </div>
+                <div class="card-body">
+                    <p>Defina os valores dos serviços e crie tabelas de preços diferentes para cada unidade.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-primary">Gerenciar Preços</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        function inicializarSidebar() {
+        // Lógica para o menu dropdown
+        document.querySelectorAll('.sidebar li.has-submenu').forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const submenu = item.nextElementSibling;
+                if (submenu && submenu.classList.contains('submenu')) {
+                    submenu.classList.toggle('open');
+                    submenu.hidden = !submenu.classList.contains('open');
+                    item.classList.toggle('open');
+                }
+            });
+        })};
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Como a sidebar é incluída pelo Flask, o HTML dela já está aqui.
+            // Primeiro, inicializamos a sidebar.
+            inicializarSidebar();
+        });
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, abort
 from datetime import datetime, timedelta
 from flask_login import login_required, current_user
 import requests
@@ -274,7 +274,16 @@ def to_time(value):
         return None
 
 
+@agenda_bp.route('/empresa')
+@login_required
+def empresa():
+    # Segunda camada de segurança: verifica o nível do usuário logado
+    if current_user.nivel != 'gerente':
+        # Se não for gerente, retorna um erro de "Acesso Proibido"
+        abort(403) 
 
+    # Se for gerente, renderiza a página normalmente
+    return render_template('empresa.html')
 
 
 
@@ -339,3 +348,12 @@ def agenda_multipla():
     except Exception as e:
         print(f"ERRO GERAL NA ROTA /multipla: {e}")
         return "Ocorreu um erro ao carregar a agenda múltipla.", 500
+    
+
+@agenda_bp.route('/telao')
+@login_required
+def telao():
+    """Renderiza o painel de atendimento (TV da recepção)."""
+    # No futuro, esta rota buscará os dados do agendamento atual e da fila.
+    return render_template('telao.html')
+

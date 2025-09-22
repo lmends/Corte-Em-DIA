@@ -29,32 +29,12 @@ body {
 /* ==============================================
    2. SIDEBAR E LAYOUT PRINCIPAL
    ============================================== */
-.sidebar {
-    width: 260px;
-    background: var(--cor-fundo-dark);
-    color: var(--cor-texto-light);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    box-sizing: border-box;
-    position: fixed;
-    top: 0;
-    left: 0;
-    box-shadow: 3px 0 15px rgba(0,0,0,0.2);
-}
-.sidebar h2 { text-align: center; margin-bottom: 25px; font-size: 1.8em; color: var(--cor-primaria); font-weight: 700; }
-.sidebar ul { list-style: none; padding: 0; margin: 0; }
-.sidebar li { display: flex; align-items: center; padding: 12px 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; transition: background-color 0.25s ease, color 0.25s ease; font-weight: 600; }
-.sidebar li:hover { background-color: #333; color: var(--cor-primaria); }
-.sidebar li .icon { margin-right: 12px; fill: currentColor; width: 20px; height: 20px; }
-.sidebar li.has-submenu { justify-content: space-between; }
-.sidebar ul.submenu { list-style: none; padding-left: 40px; max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
-.sidebar ul.submenu.open { max-height: 500px; }
 
 .content {
-    margin-left: 260px;
-    padding: 40px;
+    margin-left: 240px;
+    padding-left: 2.5rem;
+    padding-right: 3rem;
+    padding-bottom: 2.5rem;
     flex: 1;
     overflow-y: auto;
 }

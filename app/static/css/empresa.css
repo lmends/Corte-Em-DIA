@@ -1,0 +1,132 @@
+/* ==============================================
+   EMPRESA.CSS - TEMA "BLACK & GOLD" INDEPENDENTE
+   ============================================== */
+
+/* 1. VARIÁVEIS E GLOBAIS
+   ============================================== */
+:root {
+    --cor-primaria: #ffcc00;  /* Dourado/Amarelo */
+    --cor-fundo-dark: #1f1f1f;
+    --cor-fundo-light: #f8f9fa;
+    --cor-surface: #ffffff;
+    --cor-texto-dark: #212529;
+    --cor-texto-light: #ffffff;
+    --cor-texto-secundario: #6c757d;
+    --cor-borda: #dee2e6;
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background-color: var(--cor-fundo-light);
+    color: var(--cor-texto-dark);
+    display: flex;
+}
+
+/* ==============================================
+   2. SIDEBAR E LAYOUT PRINCIPAL
+   ============================================== */
+
+.content {
+    margin-left: 240px;
+    padding-left: 2.5rem;
+    padding-right: 3rem;
+    padding-bottom: 2.5rem;
+    flex: 1;
+    overflow-y: auto;
+}
+.content h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+.content .subtitulo {
+    font-size: 1.1rem;
+    color: var(--cor-texto-secundario);
+    margin-top: 0;
+    margin-bottom: 2.5rem;
+}
+
+/* ==============================================
+   3. GRID DE GERENCIAMENTO
+   ============================================== */
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    background: var(--cor-surface);
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--cor-borda);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.card-icon {
+    font-size: 1.5rem;
+    color: var(--cor-primaria);
+}
+.card-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+}
+.card-body p {
+    margin: 0 0 1.5rem 0;
+    color: var(--cor-texto-secundario);
+    line-height: 1.6;
+}
+
+.card-footer {
+    padding: 1rem 1.5rem;
+    background-color: var(--cor-fundo-light);
+    text-align: right;
+    border-top: 1px solid var(--cor-borda);
+}
+
+/* ==============================================
+   BOTÕES (Estilo unificado)
+   ============================================== */
+.btn {
+    padding: 0.7rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--cor-fundo-dark);
+    color: var(--cor-primaria);
+    border-color: var(--cor-fundo-dark);
+}
+.btn-primary:hover {
+    background-color: var(--cor-primaria);
+    color: var(--cor-fundo-dark);
+    border-color: var(--cor-primaria);
+}
