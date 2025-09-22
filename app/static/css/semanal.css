@@ -1,45 +1,91 @@
 /* ==============================================
-   CONFIGURAÇÕES GLOBAIS E VARIÁVEIS DE COR
+   SEMANAL.CSS - TEMA "BLACK & GOLD" INDEPENDENTE
+   ============================================== */
+
+/* 1. VARIÁVEIS E GLOBAIS
    ============================================== */
 :root {
-    --cor-principal: #007bff; /* Azul primário */
-    --cor-sucesso: #28a745;   /* Verde para agendar/salvar */
-    --cor-perigo: #dc3545;    /* Vermelho para cancelar */
-    --cor-secundaria: #6c757d;/* Cinza para ações secundárias */
-    --cor-aviso: #ffc107;     /* Amarelo para receber/atenção */
-    --cor-fundo: #f4f7f6;     /* Cinza bem claro para o fundo */
-    --cor-texto: #333;       /* Cor principal do texto */
-    --cor-texto-claro: #555;
+    --cor-primaria: #ffcc00;  /* Dourado/Amarelo */
+    --cor-fundo-dark: #1f1f1f;
+    --cor-fundo-light: #f8f9fa;
+    --cor-surface: #ffffff;
+    --cor-texto-dark: #212529;
+    --cor-texto-light: #ffffff;
+    --cor-texto-secundario: #6c757d;
     --cor-borda: #dee2e6;
-    --cor-cabecalho-tabela: #343a40;
+    --cor-sucesso: #28a745;
+    --cor-perigo: #dc3545;
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 body {
     margin: 0;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background-color: var(--cor-fundo-light);
+    color: var(--cor-texto-dark);
     display: flex;
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--cor-fundo);
-    color: var(--cor-texto);
 }
 
+/* ==============================================
+   2. SIDEBAR E LAYOUT PRINCIPAL
+   ============================================== */
+.sidebar {
+    width: 260px;
+    background: var(--cor-fundo-dark);
+    color: var(--cor-texto-light);
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 3px 0 15px rgba(0,0,0,0.2);
+}
+.sidebar h2 { text-align: center; margin-bottom: 25px; font-size: 1.8em; color: var(--cor-primaria); font-weight: 700; }
+.sidebar ul { list-style: none; padding: 0; margin: 0; }
+.sidebar li { display: flex; align-items: center; padding: 12px 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; transition: background-color 0.25s ease, color 0.25s ease; font-weight: 600; }
+.sidebar li:hover { background-color: #333; color: var(--cor-primaria); }
+.sidebar li .icon { margin-right: 12px; fill: currentColor; width: 20px; height: 20px; }
+.sidebar li.has-submenu { justify-content: space-between; }
+.sidebar ul.submenu { list-style: none; padding-left: 40px; max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+.sidebar ul.submenu.open { max-height: 500px; }
+
 .content {
-    margin-left: 240px;
-    padding-left: 2.5rem;
-    padding-right: 3rem;
+    margin-left: 260px;
+    padding: 40px;
     flex: 1;
     overflow-y: auto;
 }
+.content h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
 
 /* ==============================================
-   COMPONENTES DE FORMULÁRIO (Filtros, Modal, etc.)
-   ============================================== */
-/* ==============================================
-   SEMANAL.CSS - Estilo da Agenda Semanal
+   3. FILTROS E NAVEGAÇÃO DA SEMANA
    ============================================== */
 .filtros-container {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    gap: 1.5rem;
+    background: var(--cor-surface);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    margin-bottom: 3rem;
+    border: 1px solid var(--cor-borda);
+}
+.form-group { flex-shrink: 0; }
+label { font-weight: 600; margin-bottom: 0.5rem; color: #555; font-size: 0.9rem; }
+select {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
 }
 .nav-semana {
     display: flex;
@@ -52,54 +98,97 @@ body {
     min-width: 220px;
     text-align: center;
 }
+.nav-semana .btn {
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    background-color: var(--cor-fundo-dark);
+    color: var(--cor-primaria);
+    border: 2px solid var(--cor-fundo-dark);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.nav-semana .btn:hover {
+    background-color: var(--cor-primaria);
+    color: var(--cor-fundo-dark);
+    border-color: var(--cor-primaria);
+    transform: translateY(-2px);
+}
+
+/* ==============================================
+   4. GRADE DA AGENDA SEMANAL
+   ============================================== */
 .agenda-semanal-container {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+    gap: 15px;
     align-items: flex-start;
 }
+
 .coluna-dia {
-    background-color: #fff;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
+    background-color: var(--cor-surface);
+    border-radius: 12px;
+    border: 1px solid var(--cor-borda);
     overflow: hidden;
+    box-shadow: var(--sombra-suave);
 }
+
 .coluna-dia-header {
-    padding: 10px;
-    background-color: #343a40;
-    color: white;
+    padding: 12px;
+    background-color: var(--cor-fundo-dark);
+    color: var(--cor-primaria);
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
 }
 .coluna-dia-header small {
     font-weight: normal;
     font-size: 12px;
     opacity: 0.8;
+    color: var(--cor-texto-light);
 }
+
 .coluna-dia-body {
-    padding: 8px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
     min-height: 400px;
 }
+
 .slot {
-    padding: 8px;
-    border-radius: 4px;
-    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13px;
     border: 1px solid transparent;
+    transition: all 0.2s ease;
 }
+
 .slot.vago {
-    background-color: #f8f9fa;
+    background-color: var(--cor-fundo-light);
     text-align: center;
     color: #aaa;
 }
-.slot.ocupado {
-    background-color: #e7f3ff;
-    border-color: #007bff;
-    font-weight: 500;
+.slot.vago:hover {
+    background-color: #e9ecef;
+    color: #888;
 }
+
+.slot.ocupado {
+    background-color: #fffbe6;
+    border-color: var(--cor-primaria);
+    font-weight: 500;
+    color: var(--cor-texto-dark);
+}
+
 .slot-hora {
     font-weight: bold;
-    margin-right: 5px;
+    margin-right: 8px;
+}
+
+/* Responsividade */
+@media (max-width: 1400px) {
+    .agenda-semanal-container {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
 }

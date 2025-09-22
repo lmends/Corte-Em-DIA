@@ -34,8 +34,10 @@ def create_app():
     with app.app_context():
         # Importa e registra as blueprints
         from .routes.agenda import agenda_bp
-        from .routes.auth import auth_bp # <-- Importa a nova blueprint
+        from .routes.auth import auth_bp
+        from .routes.agenda_semanal import semanal_bp 
 
         app.register_blueprint(agenda_bp)
-        app.register_blueprint(auth_bp) # <-- Registra a nova blueprint
+        app.register_blueprint(auth_bp)
+        app.register_blueprint(semanal_bp) 
     return app

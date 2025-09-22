@@ -245,59 +245,6 @@ def to_time(value):
         return None
 
 
-@agenda_bp.route('/semanal')
-@login_required
-def agenda_semanal():
-    try:
-        # Pega o profissional e o offset da semana da URL (ex: /semanal?profissional=u1&offset=0)
-        profissional_id_filtro = request.args.get('profissional')
-        semana_offset = int(request.args.get('offset', 0)) # Semana atual é offset 0
-
-        usuarios, clientes, procedimentos = buscar_dados_apoio()
-        profissionais = {uid: udata for uid, udata in usuarios.items() if udata.get('nivel') == 'profissional'}
-
-        if not profissional_id_filtro and profissionais:
-            profissional_id_filtro = list(profissionais.keys())[0]
-
-        # Calcula o primeiro (domingo) e último (sábado) dia da semana desejada
-        hoje = datetime.now()
-        # Cria uma cópia da data de hoje para não modificar a original
-        inicio_da_semana_atual = hoje - timedelta(days=(hoje.weekday() + 1) % 7)
-
-        # Aplica o offset de semanas para navegar para o passado ou futuro
-        primeiro_dia = inicio_da_semana_atual + timedelta(weeks=semana_offset)
-        ultimo_dia = primeiro_dia + timedelta(days=6)
-        
-        inicio_str = primeiro_dia.strftime('%Y-%m-%d')
-        fim_str = ultimo_dia.strftime('%Y-%m-%d')
-        
-        # Busca as regras de disponibilidade que cruzam com a semana
-        regras_query = db.collection('disponibilidades').where(filter=FieldFilter("profissionalId", "==", profissional_id_filtro)).where(filter=FieldFilter("dataInicioValidade", "<=", fim_str))
-        regras_snap = regras_query.stream()
-        regras_da_semana = [doc.to_dict() for doc in regras_snap if doc.to_dict().get('dataFimValidade', '1900-01-01') >= inicio_str]
-
-        # Busca os agendamentos da semana
-        agendamentos_query = db.collection('agendas').where(filter=FieldFilter("profissionalId", "==", profissional_id_filtro)).where(filter=FieldFilter("dia", ">=", inicio_str)).where(filter=FieldFilter("dia", "<=", fim_str))
-        agendamentos_snap = agendamentos_query.stream()
-        agendamentos_por_dia = {str(i): [] for i in range(7)}
-        for doc in agendamentos_snap:
-            agendamento = {**doc.to_dict(), 'id': doc.id}
-            data_agendamento = datetime.strptime(agendamento['dia'], '%Y-%m-%d')
-            dia_da_semana_idx = (data_agendamento.weekday() + 1) % 7
-            agendamentos_por_dia[str(dia_da_semana_idx)].append(agendamento)
-
-        return render_template('semanal.html', 
-                               profissionais=profissionais,
-                               profissional_selecionado=profissional_id_filtro,
-                               offset=semana_offset,
-                               titulo_semana=f"{primeiro_dia.strftime('%d/%m')} - {ultimo_dia.strftime('%d/%m/%Y')}",
-                               regras=regras_da_semana,
-                               agendamentos=agendamentos_por_dia,
-                               clientes=clientes
-                              )
-    except Exception as e:
-        print(f"ERRO GERAL NA ROTA /semanal: {e}")
-        return "Ocorreu um erro ao carregar a agenda semanal.", 500
 
 
 
