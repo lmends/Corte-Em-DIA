@@ -3,30 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <title>Agenda Semanal - Corte em Dia</title>
-    <link rel="stylesheet" href="css/semanal.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/semanal.css') }}">
 </head>
 <body>
-    <div id="sidebarContainer"></div>
+    {% include 'partials/sidebar.html' %}
 
-    <div class="content">
+    <main class="content">
         <h1>Agenda Semanal</h1>
 
         <div class="filtros-container">
             <div class="form-group">
                 <label for="selectProfissional">Profissional:</label>
-                <select id="selectProfissional"></select>
+                <select id="selectProfissional" name="profissional">
+                    {% for prof_id, prof_data in profissionais.items() %}
+                        <option value="{{ prof_id }}" {% if prof_id == profissional_selecionado %}selected{% endif %}>
+                            {{ prof_data.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="nav-semana">
-                <button id="btnSemanaAnterior" class="btn-navegacao">&lt; Anterior</button>
-                <span id="tituloSemana" class="titulo-semana">Esta Semana</span>
-                <button id="btnProximaSemana" class="btn-navegacao">Próxima &gt;</button>
+                <a href="{{ url_for('agenda.agenda_semanal', profissional=profissional_selecionado, offset=offset-1) }}" class="btn">&lt; Anterior</a>
+                <span class="titulo-semana">{{ titulo_semana }}</span>
+                <a href="{{ url_for('agenda.agenda_semanal', profissional=profissional_selecionado, offset=offset+1) }}" class="btn">Próxima &gt;</a>
             </div>
         </div>
 
-        <div id="agendaSemanalContainer" class="agenda-semanal-container">
-            </div>
-    </div>
-
-    <script type="module" src="js/semanal.js"></script>
+        <div class="agenda-semanal-container">
+            {% set dias_da_semana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] %}
+            {% for i in range(7) %}
+                {% set data_atual = (regras[0].dataInicioValidade | to_date + timedelta(days=i)) if regras else none %}
+                <div class="coluna-dia">
+                    <div class="coluna-dia-header">
+                        {{ dias_da_semana[i] }}<br>
+                        {% if data_atual %}<small>{{ data_atual.strftime('%d/%m') }}</small>{% endif %}
+                    </div>
+                    <div class="coluna-dia-body">
+                        {% set regras_do_dia = regras | selectattr('diaDaSemana', 'equalto', i) | list %}
+                        {% if regras_do_dia %}
+                            {% for regra in regras_do_dia %}
+                                {% set hora_inicio = regla.horario_inicio | to_time %}
+                                {% set hora_fim = regla.horario_fim | to_time %}
+                                {% set intervalo = timedelta(minutes=regla.intervalo_minutos) %}
+                                {% for hora in range((hora_fim - hora_inicio).seconds // 60 // regla.intervalo_minutos) %}
+                                    {% set hora_atual = (hora_inicio + hora * intervalo).strftime('%H:%M') %}
+                                    {% set agendamento = agendamentos[i|string] | selectattr('hora', 'equalto', hora_atual) | first %}
+                                    
+                                    {% if agendamento %}
+                                        <div class="slot ocupado">
+                                            <span class="slot-hora">{{ hora_atual }}</span>
+                                            <span>{{ clientes[agendamento.clienteId].nome }}</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="slot vago">{{ hora_atual }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+    
+    <script>
+        // Script para o filtro de profissional
+        document.getElementById('selectProfissional').addEventListener('change', function() {
+            const profissionalId = this.value;
+            // Redireciona para a mesma página, mas com o novo profissional (e reseta a semana)
+            window.location.href = `{{ url_for('agenda.agenda_semanal') }}?profissional=${profissionalId}&offset=0`;
+        });
+    </script>
 </body>
 </html>

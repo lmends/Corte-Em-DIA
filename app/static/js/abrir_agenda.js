@@ -20,9 +20,41 @@ function inicializarSidebar() {
             });
         }
     }
+
+    function popularSeletoresDeTempo() {
+    const horas = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+    const minutos = ['00', '15', '30', '45'];
+
+    const selectHoraInicio = document.getElementById('horaInicial');
+    const selectMinutoInicio = document.getElementById('minutoInicial');
+    const selectHoraFim = document.getElementById('horaFinal');
+    const selectMinutoFim = document.getElementById('minutoFinal');
+
+    // Limpa opções antigas
+    selectHoraInicio.innerHTML = '';
+    selectMinutoInicio.innerHTML = '';
+    selectHoraFim.innerHTML = '';
+    selectMinutoFim.innerHTML = '';
+
+    // Popula horas
+    horas.forEach(h => {
+        selectHoraInicio.innerHTML += `<option value="${h}">${h}</option>`;
+        selectHoraFim.innerHTML += `<option value="${h}">${h}</option>`;
+    });
+
+    // Popula minutos
+    minutos.forEach(m => {
+        selectMinutoInicio.innerHTML += `<option value="${m}">${m}</option>`;
+        selectMinutoFim.innerHTML += `<option value="${m}">${m}</option>`;
+    });
+
+
+}
     
     document.addEventListener('DOMContentLoaded', () => {
         inicializarSidebar();
+
+        popularSeletoresDeTempo();
 
         // --- Elementos do DOM ---
         const selectProfissional = document.getElementById('selectProfissional');

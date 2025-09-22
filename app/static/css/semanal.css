@@ -33,348 +33,40 @@ body {
 /* ==============================================
    COMPONENTES DE FORMULÁRIO (Filtros, Modal, etc.)
    ============================================== */
-.form-container, .filtros-container {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--cor-borda);
-}
-
+/* ==============================================
+   SEMANAL.CSS - Estilo da Agenda Semanal
+   ============================================== */
 .filtros-container {
     display: flex;
-    align-items: flex-end;
-    gap: 20px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.filtros-container .form-group {
-    margin-bottom: 0;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--cor-texto-claro);
-}
-
-input[type="date"],
-input[type="time"],
-input[type="number"],
-select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--cor-borda);
-    border-radius: 5px;
-    font-size: 16px;
-    box-sizing: border-box; /* Garante que o padding não estoure a largura */
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-input[type="date"]:focus,
-input[type="time"]:focus,
-input[type="number"]:focus,
-select:focus {
-    outline: none;
-    border-color: var(--cor-principal);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
-}
-
-
-/* ==============================================
-   ESTILOS DA TABELA DE AGENDA
-   ============================================== */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #ffffff;
-    font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-th, td {
-    padding: 15px;
-    border-bottom: 1px solid var(--cor-borda);
-    text-align: left;
-    vertical-align: middle;
-}
-
-th {
-    background: var(--cor-cabecalho-tabela);
-    color: #ffffff;
-    font-weight: 500;
-    text-transform: uppercase;
-    font-size: 12px;
-}
-
-tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-
-tr:hover {
-    background-color: #e9ecef;
-}
-
-/* ==============================================
-   BOTÕES
-   ============================================== */
-button, .btn-abrir-agenda {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-button:hover, .btn-abrir-agenda:hover {
-    transform: translateY(-1px);
-}
-
-.btn-agendar { background-color: var(--cor-sucesso); color: white; }
-.btn-agendar:hover { background-color: #218838; }
-
-.btn-filtrar, .btn-salvar, .btn-principal { background-color: var(--cor-principal); color: white; }
-.btn-filtrar:hover, .btn-salvar:hover, .btn-principal:hover { background-color: #0069d9; }
-
-.btn-cancelar, .btn-desmarcar { background-color: var(--cor-perigo); color: white; }
-.btn-cancelar:hover, .btn-desmarcar:hover { background-color: #c82333; }
-
-.btn-receber { background-color: var(--cor-aviso); color: #212529; }
-.btn-receber:hover { background-color: #e0a800; }
-
-.btn-abrir-agenda { background-color: var(--cor-secundaria); color: white; margin-left: auto; }
-.btn-abrir-agenda:hover { background-color: #5a6268; }
-
-.btn-desmarcar, .btn-receber { padding: 8px 10px; font-size: 13px; }
-.acoes-multiplas { display: flex; gap: 8px; align-items: center; }
-
-/* ==============================================
-   GRADE DE HORÁRIOS (ABRIR AGENDA)
-   ============================================== */
-.grade-vigente-container {
-    display: grid;
-    /* Esta linha FORÇA a criação de 7 colunas de tamanho igual */
-    grid-template-columns: repeat(7, 1fr);
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.dia-coluna {
-    border: 1px solid var(--cor-borda);
-    border-radius: 8px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-}
-
-.dia-header {
-    font-weight: bold;
-    text-align: center;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid var(--cor-borda);
-}
-
-.dia-body {
-    padding: 10px;
-    flex-grow: 1;
-    min-height: 100px;
-}
-
-.slot-vazio {
-    text-align: center;
-    color: #999;
-    font-size: 13px;
-    padding-top: 20px;
-}
-
-.slot-definido {
-    background-color: #e7f3ff;
-    border: 1px solid #b3d7ff;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    position: relative;
-}
-
-.slot-horario { font-weight: bold; margin-bottom: 5px; }
-.slot-intervalo { color: var(--cor-texto-claro); }
-.slot-acoes { position: absolute; top: 5px; right: 5px; }
-
-.btn-acao-slot { background: none; font-size: 14px; padding: 2px; }
-
-.btn-incluir-horario {
-    width: 100%;
-    padding: 8px;
-    background-color: #f8f9fa;
-    font-weight: bold;
-    color: var(--cor-principal);
-    border-top: 1px solid var(--cor-borda);
-}
-.btn-incluir-horario:hover { background-color: #e9ecef; }
-
-
-/* ==============================================
-   MODAL
-   ============================================== */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal-overlay.ativo {
-    display: flex;
-    opacity: 1;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 30px 40px;
-    border-radius: 8px;
-    width: 400px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    transform: scale(0.95);
-    transition: transform 0.3s ease;
-}
-
-.modal-overlay.ativo .modal-content {
-    transform: scale(1);
-}
-
-.modal-content h3 {
-    margin-top: 0;
-    margin-bottom: 25px;
-    font-weight: 500;
-}
-
-.modal-actions {
-    text-align: right;
-    margin-top: 30px;
-}
-
-.modal-content.modal-lg {
-    width: 700px; /* Modal maior */
-}
-
-.modal-header {
-    display: flex;
     justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--cor-borda);
-    padding-bottom: 15px;
-    margin-bottom: 20px;
+    align-items: flex-end;
 }
-
-.modal-header h3 {
-    margin: 0;
-}
-
-.btn-fechar-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #888;
-}
-
-.weekdays-selector {
-    margin-bottom: 20px;
-}
-.weekdays-selector > label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 10px;
-}
-
-.checkbox-group {
-    display: flex;
-    gap: 15px;
-}
-.checkbox-group label {
-    margin-left: 5px;
-    font-weight: normal;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 15px;
-}
-
-/* Estilos para a Agenda Múltipla */
-.profissionais-container {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 20px;
-    align-items: flex-start; /* <-- Adicione esta linha MÁGICA */
-}
-
-.tabela-profissional {
-    /* Define uma largura base, mas permite que cresça */
-    flex: 1 1 300px; 
-    min-width: 300px;
-}
-
-.tabela-profissional th.profissional-header {
-    background-color: var(--cor-principal);
-    text-align: center;
-    font-size: 16px;
-}
-
 .nav-semana {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-left: auto; /* Empurra para a direita */
+    gap: 1rem;
 }
 .titulo-semana {
-    font-weight: bold;
-    font-size: 16px;
-    min-width: 150px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    min-width: 220px;
     text-align: center;
 }
-.btn-navegacao {
-    padding: 8px 12px;
-}
-
 .agenda-semanal-container {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 10px;
     align-items: flex-start;
 }
-
 .coluna-dia {
     background-color: #fff;
     border-radius: 8px;
-    border: 1px solid var(--cor-borda);
-    overflow: hidden; /* Garante que o header não vaze */
+    border: 1px solid #dee2e6;
+    overflow: hidden;
 }
-
 .coluna-dia-header {
     padding: 10px;
-    background-color: var(--cor-cabecalho-tabela);
+    background-color: #343a40;
     color: white;
     text-align: center;
     font-weight: bold;
@@ -384,14 +76,13 @@ button:hover, .btn-abrir-agenda:hover {
     font-size: 12px;
     opacity: 0.8;
 }
-
 .coluna-dia-body {
-    padding: 5px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 5px;
+    min-height: 400px;
 }
-
 .slot {
     padding: 8px;
     border-radius: 4px;
@@ -405,7 +96,8 @@ button:hover, .btn-abrir-agenda:hover {
 }
 .slot.ocupado {
     background-color: #e7f3ff;
-    border-color: var(--cor-principal);
+    border-color: #007bff;
+    font-weight: 500;
 }
 .slot-hora {
     font-weight: bold;
