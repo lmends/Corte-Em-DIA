@@ -1,0 +1,184 @@
+/* ==============================================
+   GERENCIAR_UNIDADES.CSS - TEMA "BLACK & GOLD"
+   ============================================== */
+
+/* 1. VARIÁVEIS E GLOBAIS
+   ============================================== */
+:root {
+    --cor-primaria: #ffcc00;  /* Dourado/Amarelo */
+    --cor-fundo-dark: #1f1f1f;
+    --cor-fundo-light: #f8f9fa;
+    --cor-surface: #ffffff;
+    --cor-texto-dark: #212529;
+    --cor-texto-light: #ffffff;
+    --cor-texto-secundario: #6c757d;
+    --cor-borda: #dee2e6;
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background-color: var(--cor-fundo-light);
+    color: var(--cor-texto-dark);
+    display: flex;
+}
+
+/* ==============================================
+   2. SIDEBAR E LAYOUT PRINCIPAL
+   ============================================== */
+/* ... (Se você precisar de estilos da sidebar aqui, eles seriam importados ou colados) ... */
+
+.content {
+    margin-left: 260px;
+    padding: 40px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* ==============================================
+   3. CABEÇALHO DA PÁGINA
+   ============================================== */
+.header-com-botao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.content h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin: 0; /* Remove margem para alinhar com o botão */
+}
+
+.subtitulo {
+    font-size: 1.1rem;
+    color: var(--cor-texto-secundario);
+    margin-top: 0;
+    margin-bottom: 2.5rem;
+}
+
+/* ==============================================
+   4. BOTÕES
+   ============================================== */
+.btn {
+    padding: 0.7rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.btn-principal {
+    background-color: var(--cor-fundo-dark);
+    color: var(--cor-primaria);
+    border-color: var(--cor-fundo-dark);
+}
+
+.btn-principal:hover {
+    background-color: var(--cor-primaria);
+    color: var(--cor-fundo-dark);
+    border-color: var(--cor-primaria);
+}
+
+.btn-acao {
+    font-size: 1.2rem; /* Aumenta o tamanho do emoji */
+    text-decoration: none;
+    padding: 5px 8px;
+    transition: transform 0.2s ease;
+}
+.btn-acao:hover {
+    transform: scale(1.2);
+}
+
+/* ==============================================
+   5. CONTAINER DA TABELA
+   ============================================== */
+.tabela-container {
+    background: var(--cor-surface);
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-borda);
+    overflow: hidden; /* Garante que a tabela respeite as bordas arredondadas */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+thead th {
+    background: var(--cor-fundo-dark);
+    color: var(--cor-primaria);
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+    border-top: 1px solid var(--cor-borda);
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* ==============================================
+   BOTÕES DE AÇÃO NA TABELA (Editado para o Tema)
+   ============================================== */
+
+/* Base para todos os botões de ação (editar, excluir, etc.) */
+.btn-acao {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    border: 1px solid transparent; /* Borda transparente por padrão */
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Estilo específico para o botão de editar "Black & Gold" */
+.btn-editar {
+    color: var(--cor-texto-dark);       /* Cor do texto padrão */
+    background-color: transparent;      /* Fundo transparente no estado normal */
+    border-color: var(--cor-borda);     /* Borda sutil para delimitar */
+}
+
+/* Efeito Hover */
+.btn-editar:hover {
+    background-color: var(--cor-primaria); /* Fundo fica dourado */
+    color: var(--cor-fundo-dark);          /* Texto fica escuro para contraste */
+    border-color: var(--cor-primaria);     /* Borda dourada */
+    transform: translateY(-2px);           /* Pequeno efeito de elevação */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Garante que o ícone SVG também mude de cor no hover */
+.btn-editar svg {
+    stroke: var(--cor-texto-dark); /* Ícone com a cor do texto */
+    transition: stroke 0.2s ease-in-out;
+}
+
+.btn-editar:hover svg {
+    stroke: var(--cor-fundo-dark); /* Ícone fica escuro no fundo dourado */
+}

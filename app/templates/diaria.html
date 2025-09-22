@@ -36,29 +36,41 @@
             <table id="agendaTable" role="grid">
                 <thead>
                     <tr>
-                        <th>Profissional</th>
+                        <th>Hora</th>
                         <th>Cliente</th>
                         <th>Procedimento</th>
-                        <th>Data</th>
-                        <th>Hora</th>
+                        <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="agendaTbody">
                     {% for slot in slots %}
-                        <tr>
-                            <td>{{ slot.profissional_nome }}</td>
+                        <tr class="status-{{ slot.status }}">
+                            <td><strong>{{ slot.hora }}</strong></td>
                             <td>
+                                {# Mostra '---' se não houver cliente associado #}
+                                {{ slot.cliente_nome or '---' }}
+                            </td>
+                            <td>
+                                {{ slot.procedimento_nome or '---' }}
+                            </td>
+                            <td>
+                                {# Badge de Status com cor #}
                                 {% if slot.status == 'vago' %}
-                                    <strong>Vago</strong>
-                                {% else %}
-                                    {{ slot.cliente_nome }}
+                                    <span class="status status-vago">Vago</span>
+                                
+                                {% elif slot.status == 'agendado' or slot.status == 'ocupado' %}
+                                    <span class="status status-ocupado">Agendado</span>
+
+                                {% elif slot.status == 'faltou' %}
+                                    <span class="status status-faltou">Faltou</span>
+
+                                {% elif slot.status == 'bloqueado' %}
+                                    <span class="status status-bloqueado">Bloqueado</span>
                                 {% endif %}
                             </td>
-                            <td>{{ slot.procedimento_nome or '' }}</td>
-                            <td>{{ slot.data }}</td>
-                            <td>{{ slot.hora }}</td>
                             <td>
+                                {# Lógica para mostrar ações apenas quando aplicável #}
                                 {% if slot.status == 'vago' %}
                                     <button class="btn-agendar" 
                                             data-profissional-id="{{ slot.profissional_id }}"
@@ -67,17 +79,18 @@
                                             data-hora="{{ slot.hora }}">
                                         Agendar
                                     </button>
-                                {% else %}
+                                {% elif slot.status == 'ocupado' or slot.status == 'agendado' %}
                                     <div class="acoes-multiplas">
                                         <button class="btn-receber" data-agendamento-id="{{ slot.agendamento_id }}">Receber</button>
                                         <button class="btn-desmarcar" data-agendamento-id="{{ slot.agendamento_id }}">Desmarcar</button>
                                     </div>
                                 {% endif %}
+                                {# Para 'faltou' e 'bloqueado', nada é renderizado aqui #}
                             </td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="6">Nenhuma disponibilidade encontrada para esta data/profissional.</td>
+                            <td colspan="5">Nenhuma disponibilidade encontrada para esta data/profissional.</td>
                         </tr>
                     {% endfor %}
                 </tbody>

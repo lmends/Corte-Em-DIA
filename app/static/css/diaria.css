@@ -192,3 +192,37 @@ tbody tr:hover { background-color: #f1f3f5; }
     border-color: var(--cor-primaria);
 }
 .btn-cancelar { background-color: var(--cor-texto-secundario); color: white; }
+
+
+/* ==========================
+   STATUS DE AGENDAMENTO
+   ========================== */
+
+/* Estilo base para os badges de status */
+.status {
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Cores específicas para cada status */
+.status-ocupado    { background-color: #3498db; } /* Azul */
+.status-faltou     { background-color: #e74c3c; } /* Vermelho */
+.status-bloqueado  { background-color: #95a5a6; } /* Cinza */
+
+/* Efeito sutil para linhas bloqueadas e de falta */
+tr.status-bloqueado,
+tr.status-faltou {
+    background-color: #f7f7f7;
+    color: #aaa;
+}
+
+/* Remove a cor do texto forte em horários passados */
+tr.status-bloqueado td strong,
+tr.status-faltou td strong {
+    color: #aaa;
+}

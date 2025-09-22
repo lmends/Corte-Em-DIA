@@ -36,8 +36,10 @@ def create_app():
         from .routes.agenda import agenda_bp
         from .routes.auth import auth_bp
         from .routes.agenda_semanal import semanal_bp 
+        from .routes.empresa import empresa_bp
 
         app.register_blueprint(agenda_bp)
         app.register_blueprint(auth_bp)
         app.register_blueprint(semanal_bp) 
+        app.register_blueprint(empresa_bp)
     return app

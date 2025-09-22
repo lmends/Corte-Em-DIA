@@ -83,17 +83,13 @@ def agenda_diaria():
         usuarios, clientes, procedimentos = buscar_dados_apoio()
         profissionais = {uid: udata for uid, udata in usuarios.items() if udata.get('nivel') == 'profissional'}
 
-        # --- NOVA LÓGICA DE SEGURANÇA ---
         slots = []
-        # Se não houver nenhum profissional cadastrado, não precisamos nem continuar
         if not profissionais:
             profissional_id_filtro = None
         else:
-            # Se nenhum profissional foi selecionado no filtro, pega o primeiro da lista
             if not profissional_id_filtro:
                 profissional_id_filtro = list(profissionais.keys())[0]
 
-            # O resto da sua lógica de buscar regras e agendamentos vem aqui
             data_selecionada = datetime.strptime(data_str, '%Y-%m-%d')
             dia_da_semana = (data_selecionada.weekday() + 1) % 7
             regras_query = db.collection('disponibilidades').where(filter=FieldFilter("diaDaSemana", "==", dia_da_semana)).where(filter=FieldFilter("dataInicioValidade", "<=", data_str))
@@ -109,6 +105,23 @@ def agenda_diaria():
             agendamentos_query = db.collection('agendas').where('dia', '==', data_str).stream()
             agendamentos_map = { f"{doc.to_dict()['profissionalId']}_{doc.to_dict()['hora']}": {**doc.to_dict(), 'id': doc.id} for doc in agendamentos_query }
 
+            # --- LÓGICA PARA ATUALIZAR STATUS PARA "FALTOU" ---
+            agora = datetime.now()
+            for agendamento in list(agendamentos_map.values()):
+                if agendamento.get('status') == 'agendado':
+                    try:
+                        horario_agendamento_str = f"{agendamento['dia']} {agendamento['hora']}"
+                        horario_agendamento = datetime.strptime(horario_agendamento_str, '%Y-%m-%d %H:%M')
+
+                        if agora > (horario_agendamento + timedelta(hours=1)):
+                            agendamento_id = agendamento['id']
+                            db.collection('agendas').document(agendamento_id).update({'status': 'faltou'})
+                            agendamento['status'] = 'faltou' # Atualiza localmente
+                            print(f"Agendamento {agendamento_id} atualizado para 'faltou'.")
+                    except Exception as e:
+                        print(f"Erro ao processar agendamento {agendamento.get('id')}: {e}")
+            # --- FIM DA LÓGICA DE ATUALIZAÇÃO ---
+
             for regra in sorted(regras_do_dia, key=lambda r: r['horario_inicio']):
                 intervalo = timedelta(minutes=regra.get('intervalo_minutos', 30))
                 hora_inicio = datetime.strptime(regra['horario_inicio'], '%H:%M')
@@ -118,9 +131,23 @@ def agenda_diaria():
                     hora_str = hora_atual.strftime('%H:%M')
                     key = f"{regra['profissionalId']}_{hora_str}"
                     slot_info = {"profissional_id": regra['profissionalId'], "profissional_nome": usuarios.get(regra['profissionalId'], {}).get('nome', 'N/A'), "data": data_str, "hora": hora_str, "status": "vago"}
+                    
                     if key in agendamentos_map:
                         agendamento = agendamentos_map[key]
-                        slot_info.update({"status": "ocupado", "agendamento_id": agendamento['id'], "cliente_nome": clientes.get(agendamento.get('clienteId'), {}).get('nome', 'N/A'), "procedimento_nome": procedimentos.get(agendamento.get('procedimentoId'), {}).get('nome', 'N/A')})
+                        slot_info.update({
+                            "status": agendamento.get('status', 'ocupado'), 
+                            "agendamento_id": agendamento['id'],
+                            "cliente_nome": clientes.get(agendamento.get('clienteId'), {}).get('nome', 'N/A'),
+                            "procedimento_nome": procedimentos.get(agendamento.get('procedimentoId'), {}).get('nome', 'N/A')
+                        })
+                    
+                    # --- NOVO: LÓGICA PARA BLOQUEAR SLOTS VAGOS NO PASSADO ---
+                    if slot_info['status'] == 'vago':
+                        horario_do_slot = datetime.strptime(f"{data_str} {hora_str}", '%Y-%m-%d %H:%M')
+                        if horario_do_slot < agora:
+                            slot_info['status'] = 'bloqueado'
+                    # --- FIM DA LÓGICA DE BLOQUEIO ---
+
                     slots.append(slot_info)
                     hora_atual += intervalo
         
@@ -274,16 +301,6 @@ def to_time(value):
         return None
 
 
-@agenda_bp.route('/empresa')
-@login_required
-def empresa():
-    # Segunda camada de segurança: verifica o nível do usuário logado
-    if current_user.nivel != 'gerente':
-        # Se não for gerente, retorna um erro de "Acesso Proibido"
-        abort(403) 
-
-    # Se for gerente, renderiza a página normalmente
-    return render_template('empresa.html')
 
 
 

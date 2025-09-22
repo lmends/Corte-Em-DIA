@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Unidades - Corte em Dia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gerenciar_unidades.css') }}">
+</head>
+<body>
+    {% include 'partials/sidebar.html' %}
+
+    <main class="content">
+        <div class="header-com-botao">
+            <h1>Gerenciar Unidades</h1>
+        </div>
+        <p class="subtitulo">Edite as informações das suas unidades, incluindo dados de pagamento.</p>
+
+        <div class="tabela-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome da Unidade</th>
+                        <th>Endereço</th>
+                        <th>Telefone</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for unidade in unidades %}
+                    <tr>
+                        <td>{{ unidade.get('nome', 'N/A') }}</td>
+                        <td>{{ unidade.get('endereco', 'N/A') }}</td>
+                        <td>{{ unidade.get('telefone', 'N/A') }}</td>
+                        <td>
+                            <a href="#" class="btn-acao btn-editar">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                </svg>
+                                <span>Editar</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4">Nenhuma unidade cadastrada.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        function inicializarSidebar() {
+        // Lógica para o menu dropdown
+        document.querySelectorAll('.sidebar li.has-submenu').forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const submenu = item.nextElementSibling;
+                if (submenu && submenu.classList.contains('submenu')) {
+                    submenu.classList.toggle('open');
+                    submenu.hidden = !submenu.classList.contains('open');
+                    item.classList.toggle('open');
+                }
+            });
+        })};
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Como a sidebar é incluída pelo Flask, o HTML dela já está aqui.
+            // Primeiro, inicializamos a sidebar.
+            inicializarSidebar();
+        });
+    </script>
+</body>
+</html>
