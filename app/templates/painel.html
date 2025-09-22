@@ -13,6 +13,7 @@
         <div class="header">
             <h1>Painel de Operações</h1>
             <p class="boas-vindas">Bem-vindo(a), <strong>{{ nome_usuario or 'Admin' }}</strong>!</p>
+            <p>Unidade: <strong>{{ current_user.unidade_nome or 'Não especificada' }}</strong></p>
         </div>
 
         <section class="kpi-grid">
