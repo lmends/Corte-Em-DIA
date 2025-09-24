@@ -29,61 +29,81 @@ window.addEventListener('DOMContentLoaded', () => {
     // Primeiro, inicializamos a sidebar.
     inicializarSidebar();
 
-    // --- GRÁFICO DE BARRAS: AGENDAMENTOS DA SEMANA ---
+    // Verifica se a variável global com os dados existe
+    if (typeof DADOS_GRAFICOS === 'undefined' || !DADOS_GRAFICOS) {
+        console.error("Dados para os gráficos não foram encontrados!");
+        return;
+    }
+
+    // --- Gráfico 1: Agendamentos da Semana (Gráfico de Barras) ---
     const ctxSemana = document.getElementById('graficoSemana')?.getContext('2d');
-    if (ctxSemana) {
+    if (ctxSemana && DADOS_GRAFICOS.grafico_semana_data) {
         new Chart(ctxSemana, {
             type: 'bar',
             data: {
-                labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                labels: DADOS_GRAFICOS.grafico_semana_data.labels,
                 datasets: [{
-                    label: 'Agendamentos',
-                    data: [12, 19, 8, 15, 10, 22], // Dados mock
-                    backgroundColor: 'rgba(0, 123, 255, 0.6)',
-                    borderColor: 'rgba(0, 123, 255, 1)',
-                    borderWidth: 1
+                    label: 'Nº de Atendimentos',
+                    data: DADOS_GRAFICOS.grafico_semana_data.data,
+                    backgroundColor: 'rgba(31, 31, 31, 0.8)', // Cor --cor-fundo-dark
+                    borderColor: 'rgba(255, 204, 0, 1)', // Cor --cor-primaria
+                    borderWidth: 2,
+                    borderRadius: 5,
                 }]
             },
             options: {
                 responsive: true,
-                plugins: { legend: { display: false } },
+                maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-    }
-
-    // --- NOVO GRÁFICO DE ROSCA: FATURAMENTO POR PROFISSIONAL ---
-    const ctxFaturamento = document.getElementById('graficoFaturamentoProfissional')?.getContext('2d');
-    if (ctxFaturamento) {
-        new Chart(ctxFaturamento, {
-            type: 'doughnut',
-            data: {
-                labels: ['João', 'Maria'],
-                datasets: [{
-                    label: 'Faturamento',
-                    data: [250, 130], // Dados mock
-                    backgroundColor: [
-                        'rgba(0, 123, 255, 0.7)',
-                        'rgba(255, 193, 7, 0.7)',
-                    ],
-                    borderColor: [
-                        'rgba(0, 123, 255, 1)',
-                        'rgba(255, 193, 7, 1)',
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1 // Forçar o eixo Y a contar de 1 em 1
+                        }
+                    }
+                },
                 plugins: {
                     legend: {
-                        position: 'bottom',
+                        display: false
                     }
                 }
             }
         });
     }
 
+    // --- Gráfico 2: Faturamento por Profissional (Gráfico de Pizza/Doughnut) ---
+    const ctxPizza = document.getElementById('graficoFaturamentoProfissional')?.getContext('2d');
+    if (ctxPizza && DADOS_GRAFICOS.grafico_pizza_data) {
+        new Chart(ctxPizza, {
+            type: 'doughnut',
+            data: {
+                labels: DADOS_GRAFICOS.grafico_pizza_data.labels,
+                datasets: [{
+                    label: 'Faturamento',
+                    data: DADOS_GRAFICOS.grafico_pizza_data.data,
+                    backgroundColor: [
+                        'rgba(31, 31, 31, 0.9)',
+                        'rgba(255, 204, 0, 0.9)',
+                        'rgba(108, 117, 125, 0.9)',
+                        'rgba(248, 249, 250, 0.9)',
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 15
+                        }
+                    }
+                }
+            }
+        });
+    }
 });

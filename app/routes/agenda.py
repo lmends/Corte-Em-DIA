@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, abort
 from datetime import datetime, timedelta
 from flask_login import login_required, current_user
-import requests
-import calendar
+import base64
+from pixqrcodegen import Payload
+from collections import defaultdict
 
 # Importa a instância do banco de dados 'db' do nosso __init__.py principal
 from app import db
@@ -71,7 +72,145 @@ def index():
 @agenda_bp.route('/painel')
 @login_required
 def painel():
-    return render_template('painel.html', nome_usuario=current_user.nome)
+    # --- CÓDIGO DE DEBUG ---
+    print("\n--- DEBUG: DADOS DO USUÁRIO LOGADO ---")
+    # A função vars() mostra todos os atributos de um objeto em um dicionário
+    print(f"Atributos do Objeto current_user: {vars(current_user)}")
+    print("--- FIM DO DEBUG ---\n")
+
+    try:
+        # 1. PEGAR DADOS ESSENCIAIS: UNIDADE E DATAS
+        unidade_id = current_user.unidade_id
+        if not unidade_id:
+            # Se o usuário não tem unidade (ex: admin geral), podemos mostrar dados de todas
+            # Por enquanto, vamos abortar para simplificar
+            abort(403, "Usuário sem unidade definida.")
+        
+        hoje = datetime.now()
+        hoje_str = hoje.strftime('%Y-%m-%d')
+        # Pega o início (domingo) e fim (sábado) da semana atual
+        inicio_semana = hoje - timedelta(days=hoje.isoweekday() % 7)
+        fim_semana = inicio_semana + timedelta(days=6)
+        inicio_semana_str = inicio_semana.strftime('%Y-%m-%d')
+        fim_semana_str = fim_semana.strftime('%Y-%m-%d')
+
+        # 2. BUSCAR DADOS DE APOIO
+        todos_usuarios, _, todos_procedimentos = buscar_dados_apoio()
+        
+        # Filtra apenas os profissionais da unidade do usuário logado
+        profissionais_da_unidade = {
+            uid: udata for uid, udata in todos_usuarios.items() 
+            if udata.get('unidadeId') == unidade_id and udata.get('nivel') == 'profissional'
+        }
+        ids_profissionais = list(profissionais_da_unidade.keys())
+        
+        if not ids_profissionais:
+            # Se não há profissionais, não há dados para mostrar
+            # (Renderiza o painel com dados zerados)
+            return render_template('painel.html', nome_usuario=current_user.nome, dados_painel={})
+
+        # Carregar a primeira tabela de preços da unidade para calcular valores
+        # (Esta lógica pode ser melhorada se houver múltiplas tabelas)
+        unidade_doc = db.collection('unidades').document(unidade_id).get()
+        tabela_id = unidade_doc.to_dict().get('tabelas', [None])[0]
+        tabela_valores = {}
+        if tabela_id:
+            tabela_doc = db.collection('tabelas_valores').document(tabela_id).get()
+            for item in tabela_doc.to_dict().get('valores', []):
+                tabela_valores[item['procedimentoId']] = item['valor']
+
+        # 3. BUSCAR AGENDAMENTOS RELEVANTES
+        # Busca todos os agendamentos da semana dos profissionais da unidade
+        query = db.collection('agendas') \
+                  .where('profissionalId', 'in', ids_profissionais) \
+                  .where('dia', '>=', inicio_semana_str) \
+                  .where('dia', '<=', fim_semana_str)
+        agendamentos_semana = query.stream()
+
+        # 4. PROCESSAR E CALCULAR OS KPIS
+        
+        # Variáveis para os cards
+        kpi_agendados_hoje = 0
+        kpi_atendidos_hoje = 0
+        kpi_faturamento_previsto = 0.0
+        kpi_faturamento_recebido = 0.0
+        
+        # Dicionários para os gráficos e tabelas
+        desempenho_profissionais_hoje = defaultdict(lambda: {'agendados': 0, 'atendidos': 0, 'faturamento': 0.0})
+        faturamento_profissionais_semana = defaultdict(float)
+        agendamentos_por_dia_semana = defaultdict(int)
+
+        for agendamento in agendamentos_semana:
+            dados = agendamento.to_dict()
+            dia = dados.get('dia')
+            status = dados.get('status')
+            prof_id = dados.get('profissionalId')
+            proc_id = dados.get('procedimentoId')
+            
+            # Pega o preço do procedimento da tabela de valores carregada
+            preco = tabela_valores.get(proc_id, 0.0)
+            prof_nome = profissionais_da_unidade.get(prof_id, {}).get('nome', 'N/A')
+
+            # Processa dados para os KPIs de HOJE
+            if dia == hoje_str:
+                kpi_agendados_hoje += 1
+                kpi_faturamento_previsto += preco
+                desempenho_profissionais_hoje[prof_nome]['agendados'] += 1
+
+                if status == 'recebido':
+                    kpi_atendidos_hoje += 1
+                    kpi_faturamento_recebido += preco
+                    desempenho_profissionais_hoje[prof_nome]['atendidos'] += 1
+                    desempenho_profissionais_hoje[prof_nome]['faturamento'] += preco
+
+            # Processa dados para os gráficos da SEMANA
+            if status == 'recebido':
+            # Agora só incrementa o contador se o status for 'recebido'
+                agendamentos_por_dia_semana[dia] += 1 
+                faturamento_profissionais_semana[prof_nome] += preco
+
+        # Cálculo do Ticket Médio
+        ticket_medio = kpi_faturamento_recebido / kpi_atendidos_hoje if kpi_atendidos_hoje > 0 else 0.0
+        
+        # 5. PREPARAR DADOS PARA ENVIAR AO TEMPLATE
+        
+        # Prepara dados do gráfico de agendamentos da semana
+        labels_semana = [(inicio_semana + timedelta(days=i)).strftime('%d/%m') for i in range(7)]
+        dias_semana_str = [(inicio_semana + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(7)]
+        dados_semana = [agendamentos_por_dia_semana[dia] for dia in dias_semana_str]
+
+        # Prepara dados do gráfico de pizza de faturamento
+        labels_pizza = list(faturamento_profissionais_semana.keys())
+        dados_pizza = list(faturamento_profissionais_semana.values())
+
+        dados_painel = {
+            # KPIs
+            "kpi_agendados_hoje": kpi_agendados_hoje,
+            "kpi_atendidos_hoje": kpi_atendidos_hoje,
+            "kpi_faturamento_recebido": f"R$ {kpi_faturamento_recebido:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
+            "kpi_faturamento_previsto": f"R$ {kpi_faturamento_previsto:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
+            "kpi_ticket_medio": f"R$ {ticket_medio:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
+            # Tabela
+            "desempenho_hoje": dict(desempenho_profissionais_hoje),
+            # Gráficos
+            "grafico_semana_data": {
+                "labels": labels_semana,
+                "data": dados_semana
+            },
+            "grafico_pizza_data": {
+                "labels": labels_pizza,
+                "data": dados_pizza
+            }
+        }
+        
+        return render_template('painel.html', nome_usuario=current_user.nome, dados_painel=dados_painel)
+
+    except Exception as e:
+        print(f"ERRO GERAL NA ROTA /painel: {e}")
+        # Em caso de erro, renderiza o painel vazio para não quebrar a tela
+        return render_template('painel.html', nome_usuario=current_user.nome, dados_painel={})
+
+
 
 @agenda_bp.route('/diaria')
 @login_required
@@ -138,6 +277,7 @@ def agenda_diaria():
                             "status": agendamento.get('status', 'ocupado'), 
                             "agendamento_id": agendamento['id'],
                             "cliente_nome": clientes.get(agendamento.get('clienteId'), {}).get('nome', 'N/A'),
+                            "procedimento_id": agendamento.get('procedimentoId'),
                             "procedimento_nome": procedimentos.get(agendamento.get('procedimentoId'), {}).get('nome', 'N/A')
                         })
                     
@@ -182,7 +322,133 @@ def salvar_agendamento():
         return "Ocorreu um erro ao salvar", 500
 
 
+@agenda_bp.route('/gerar-pix')
+@login_required
+def gerar_pix():
+    try:
+        agendamento_id = request.args.get('agendamento_id')
+        procedimento_id = request.args.get('procedimento_id')
+        
+        # 1. Busca os dados do Firebase (lógica que você já tem)
+        # ... (código para buscar unidade_data e valor_procedimento) ...
+        agendamento_doc = db.collection('agendas').document(agendamento_id).get()
+        profissional_id = agendamento_doc.to_dict().get('profissionalId')
+        profissional_doc = db.collection('usuarios').document(profissional_id).get()
+        unidade_id = profissional_doc.to_dict().get('unidadeId')
+        unidade_doc = db.collection('unidades').document(unidade_id).get()
+        unidade_data = unidade_doc.to_dict()
+        tabela_id_principal = unidade_data.get('tabelas')[0]
+        tabela_doc = db.collection('tabelas_valores').document(tabela_id_principal).get()
+        
+        valor_procedimento = None
+        for item in tabela_doc.to_dict().get('valores', []):
+            if item.get('procedimentoId') == procedimento_id:
+                valor_procedimento = item.get('valor')
+                break
+        
+        if valor_procedimento is None: return jsonify({"erro": "Valor não encontrado"}), 404
+        
+        # 2. Usa a SUA classe para fazer todo o trabalho
+        pix = Payload(
+            nome=unidade_data.get('nome_beneficiario_pix', 'BENEFICIARIO'),
+            chavepix=unidade_data.get('chave_pix', ''),
+            valor=str(valor_procedimento), # Converte para string como a classe espera
+            cidade="SAO JOAO DEL RE",
+            txtId=f"AG{agendamento_id[:8]}"
+        )
+        pix_copia_cola, qr_code_buffer = pix.gerarPayload() # <--- Chama o seu método
 
+        # 3. Codifica a imagem para enviar ao navegador
+        img_str = base64.b64encode(qr_code_buffer.getvalue()).decode("utf-8")
+
+        # 4. Retorna o JSON
+        return jsonify({
+            "qr_code_base64": img_str,
+            "pix_copia_cola": pix_copia_cola
+        })
+
+    except Exception as e:
+        print(f"Erro ao gerar Pix: {e}")
+        return jsonify({"erro": "Ocorreu um erro interno ao gerar o Pix"}), 500
+
+
+@agenda_bp.route('/obter-valor-procedimento')
+@login_required
+def obter_valor_procedimento():
+    try:
+        agendamento_id = request.args.get('agendamento_id')
+        procedimento_id = request.args.get('procedimento_id')
+
+        if not agendamento_id or not procedimento_id:
+            return jsonify({"erro": "IDs do agendamento e procedimento são necessários"}), 400
+
+        # 1. Achar o agendamento para pegar o profissional
+        agendamento_doc = db.collection('agendas').document(agendamento_id).get()
+        if not agendamento_doc.exists:
+            return jsonify({"erro": "Agendamento não encontrado"}), 404
+        profissional_id = agendamento_doc.to_dict().get('profissionalId')
+
+        # 2. Achar o profissional para pegar a unidade
+        profissional_doc = db.collection('usuarios').document(profissional_id).get()
+        if not profissional_doc.exists:
+            return jsonify({"erro": "Profissional não encontrado"}), 404
+        unidade_id = profissional_doc.to_dict().get('unidadeId')
+        
+        # 3. Achar a unidade para pegar a lista de tabelas de preço
+        unidade_doc = db.collection('unidades').document(unidade_id).get()
+        if not unidade_doc.exists:
+            return jsonify({"erro": "Unidade não encontrada"}), 404
+        
+        tabelas_da_unidade = unidade_doc.to_dict().get('tabelas')
+        if not tabelas_da_unidade:
+            return jsonify({"erro": "Nenhuma tabela de preço configurada para esta unidade"}), 404
+
+        # 4. Usar a primeira tabela da lista para buscar o valor
+        # (Você pode sofisticar essa lógica se uma unidade tiver múltiplas tabelas)
+        tabela_id_principal = tabelas_da_unidade[0]
+        tabela_doc = db.collection('tabelas_valores').document(tabela_id_principal).get()
+        if not tabela_doc.exists:
+            return jsonify({"erro": f"Tabela de preços {tabela_id_principal} não encontrada"}), 404
+
+        # 5. Encontrar o valor do procedimento dentro da tabela
+        valor_procedimento = None
+        valores_da_tabela = tabela_doc.to_dict().get('valores', [])
+        for item in valores_da_tabela:
+            if item.get('procedimentoId') == procedimento_id:
+                valor_procedimento = item.get('valor')
+                break
+        
+        if valor_procedimento is None:
+            return jsonify({"erro": "Valor para este procedimento não encontrado na tabela da unidade"}), 404
+
+        # 6. Sucesso! Retornar o valor encontrado.
+        return jsonify({"valor": valor_procedimento})
+
+    except Exception as e:
+        print(f"Erro ao obter valor do procedimento: {e}")
+        return jsonify({"erro": "Ocorreu um erro interno"}), 500
+
+@agenda_bp.route('/registrar-recebimento', methods=['POST'])
+@login_required
+def registrar_recebimento():
+    try:
+        # Pega o ID enviado pelo JavaScript no corpo da requisição
+        data = request.get_json()
+        agendamento_id = data.get('agendamento_id')
+
+        if not agendamento_id:
+            return jsonify({"status": "erro", "mensagem": "ID do agendamento não fornecido"}), 400
+
+        # Aponta para o documento e atualiza o campo 'status'
+        db.collection('agendas').document(agendamento_id).update({
+            'status': 'recebido'
+        })
+
+        return jsonify({"status": "sucesso", "mensagem": "Recebimento registrado com sucesso."})
+
+    except Exception as e:
+        print(f"Erro ao registrar recebimento: {e}")
+        return jsonify({"status": "erro", "mensagem": "Erro interno no servidor"}), 500
 
 
 

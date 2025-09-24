@@ -45,7 +45,7 @@
                 </thead>
                 <tbody id="agendaTbody">
                     {% for slot in slots %}
-                        <tr class="status-{{ slot.status }}">
+                        <tr class="status-{{ slot.status }}" data-agendamento-id="{{ slot.agendamento_id }}">
                             <td><strong>{{ slot.hora }}</strong></td>
                             <td>
                                 {# Mostra '---' se não houver cliente associado #}
@@ -67,6 +67,9 @@
 
                                 {% elif slot.status == 'bloqueado' %}
                                     <span class="status status-bloqueado">Bloqueado</span>
+                                
+                                {% elif slot.status == 'recebido' %}
+                                    <span class="status status-recebido">Recebido</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -81,7 +84,11 @@
                                     </button>
                                 {% elif slot.status == 'ocupado' or slot.status == 'agendado' %}
                                     <div class="acoes-multiplas">
-                                        <button class="btn-receber" data-agendamento-id="{{ slot.agendamento_id }}">Receber</button>
+                                        <button class="btn-receber" 
+                                                data-agendamento-id="{{ slot.agendamento_id }}"
+                                                data-procedimento-id="{{ slot.procedimento_id }}">
+                                            Receber
+                                        </button>
                                         <button class="btn-desmarcar" data-agendamento-id="{{ slot.agendamento_id }}">Desmarcar</button>
                                     </div>
                                 {% endif %}
@@ -121,11 +128,59 @@
         </div>
     </div>
 
+    <div id="modal-pagamento" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2>Forma de Pagamento</h2>
+            <p>Selecione como o cliente irá pagar.</p>
+            <div class="opcoes-pagamento">
+                <button class="btn-pagamento" data-metodo="Dinheiro">Dinheiro</button>
+                <button class="btn-pagamento" data-metodo="Pix">Pix</button>
+                <button class="btn-pagamento" data-metodo="Débito">Débito</button>
+                <button class="btn-pagamento" data-metodo="Crédito">Crédito</button>
+            </div>
+            <input type="hidden" id="pagamento-agendamento-id">
+            <input type="hidden" id="pagamento-procedimento-id">
+        </div>
+    </div>
+
+    <div id="modal-detalhes" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2>Confirmar Recebimento</h2>
+
+            <div id="view-valor-comum">
+                <div class="detalhes-valor">
+                    <span>Pagamento em</span>
+                    <strong id="metodo-selecionado"></strong>
+                    <div class="valor-display">
+                        R$ <span id="valor-procedimento">--,--</span>
+                    </div>
+                </div>
+                <button class="btn-confirmar">Confirmar Recebimento</button>
+            </div>
+
+            <div id="view-pix" style="display: none;">
+                <p>Peça para o cliente escanear o QR Code abaixo:</p>
+                <div class="pix-container">
+                    <img id="qr-code-img" src="" alt="QR Code Pix" /><br>
+                    <label for="pix-copia-cola-input">Ou use o Pix Copia e Cola:</label>
+                    <div class="copia-cola-wrapper">
+                        <input type="text" id="pix-copia-cola-input" readonly />
+                        <button id="btn-copiar-pix">Copiar</button>
+                    </div>
+                </div>
+                <button class="btn-confirmar">Pagamento Recebido</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const clientes = {{ clientes | tojson }};
         const procedimentos = {{ procedimentos | tojson }};
     </script>
     
     <script type="module" src="{{ url_for('static', filename='js/diaria.js') }}"></script>
+
 </body>
 </html>

@@ -19,34 +19,50 @@
         <section class="kpi-grid">
             <div class="stat-card">
                 <div class="card-icon icon-agendamentos">📅</div>
-                <div class="card-info"><span class="card-valor">8 / 12</span><span class="card-titulo">Atendidos / Agendados</span></div>
+                <div class="card-info">
+                    <span class="card-valor">{{ dados_painel.kpi_atendidos_hoje or 0 }} / {{ dados_painel.kpi_agendados_hoje or 0 }}</span>
+                    <span class="card-titulo">Atendidos / Agendados</span>
+                </div>
             </div>
             <div class="stat-card">
                 <div class="card-icon icon-faturamento">💲</div>
-                <div class="card-info"><span class="card-valor">R$ 380,00</span><span class="card-titulo">Recebido no Dia</span></div>
+                <div class="card-info">
+                    <span class="card-valor">{{ dados_painel.kpi_faturamento_recebido or 'R$ 0,00' }}</span>
+                    <span class="card-titulo">Recebido no Dia</span>
+                </div>
             </div>
             <div class="stat-card">
                 <div class="card-icon icon-previsao">💰</div>
-                <div class="card-info"><span class="card-valor">R$ 540,00</span><span class="card-titulo">Faturamento Previsto</span></div>
+                <div class="card-info">
+                    <span class="card-valor">{{ dados_painel.kpi_faturamento_previsto or 'R$ 0,00' }}</span>
+                    <span class="card-titulo">Faturamento Previsto</span>
+                </div>
             </div>
             <div class="stat-card">
                 <div class="card-icon icon-ticket">🎟️</div>
-                <div class="card-info"><span class="card-valor">R$ 47,50</span><span class="card-titulo">Ticket Médio do Dia</span></div>
+                <div class="card-info">
+                    <span class="card-valor">{{ dados_painel.kpi_ticket_medio or 'R$ 0,00' }}</span>
+                    <span class="card-titulo">Ticket Médio do Dia</span>
+                </div>
             </div>
         </section>
 
         <section class="dashboard-grid">
             <div class="main-column">
                 <div class="chart-container">
-                    <h3>Agendamentos da Semana</h3>
-                    <canvas id="graficoSemana"></canvas>
+                    <h3>Atendimentos da Semana</h3>
+                    <div class="chart-wrapper">  
+                        <canvas id="graficoSemana"></canvas>
+                    </div>                     
                 </div>
             </div>
 
             <div class="side-column">
-                <div class="chart-container" style="height: 200px; align-items: center; padding-bottom: 70px; ">
+                <div class="chart-container">
                     <h3>Faturamento por Profissional (Semana)</h3>
-                    <canvas id="graficoFaturamentoProfissional" ></canvas>
+                    <div class="chart-wrapper">  
+                        <canvas id="graficoFaturamentoProfissional"></canvas>
+                    </div>                     
                 </div>
                 <div class="table-container">
                     <h3>Desempenho por Profissional (Hoje)</h3>
@@ -59,23 +75,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>João</td>
-                                <td>5 / 7</td>
-                                <td>R$ 250,00</td>
-                            </tr>
-                            <tr>
-                                <td>Maria</td>
-                                <td>3 / 5</td>
-                                <td>R$ 130,00</td>
-                            </tr>
-                        </tbody>
+                        {% for nome, dados in dados_painel.desempenho_hoje.items() %}
+                        <tr>
+                            <td>{{ nome }}</td>
+                            <td>{{ dados.atendidos }} / {{ dados.agendados }}</td>
+                            <td>R$ {{ "%.2f"|format(dados.faturamento) | replace('.', ',') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3">Nenhum atendimento hoje.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                     </table>
                 </div>
             </div>
         </section>
     </main>
     
+    <script>
+        const DADOS_GRAFICOS = {{ dados_painel | tojson }};
+    </script>
     <script src="{{ url_for('static', filename='js/painel.js') }}"></script>
 </body>
 </html>

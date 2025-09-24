@@ -9,6 +9,7 @@ class User(UserMixin):
         self.email = user_data.get('email')
         self.nivel = user_data.get('nivel')
         # Garanta que esta linha existe
+        self.unidade_id = user_data.get('unidadeId')
         self.unidade_nome = user_data.get('unidade_nome', 'Sem unidade')
 
     @staticmethod

@@ -33,6 +33,7 @@ body {
     padding-right: 3rem;
     flex: 1;
     overflow-y: auto;
+    margin-bottom: 2rem;
 }
 
 /* ==============================================
@@ -169,6 +170,8 @@ body {
     justify-content: center;
     transition: width 0.5s ease-in-out;
 }
+
+
 
 /* Responsividade */
 @media (max-width: 1200px) {

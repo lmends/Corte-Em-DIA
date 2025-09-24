@@ -2,3 +2,6 @@ Flask
 firebase_admin
 gunicorn
 Flask-Login
+qrcode
+pillow
+crcmod
