@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 import base64
 from pixqrcodegen import Payload
 from collections import defaultdict
+from zoneinfo import ZoneInfo
 
 # Importa a instância do banco de dados 'db' do nosso __init__.py principal
 from app import db
@@ -211,7 +212,9 @@ def painel():
 @login_required
 def agenda_diaria():
     try:
-        data_str = request.args.get('data', default=datetime.now().strftime('%Y-%m-%d'))
+        TZ_SAO_PAULO = ZoneInfo("America/Sao_Paulo")
+        hoje_no_brasil = datetime.now(TZ_SAO_PAULO)
+        data_str = request.args.get('data', default=hoje_no_brasil.strftime('%Y-%m-%d'))
         profissional_id_filtro = request.args.get('profissional')
 
         usuarios, clientes, procedimentos = buscar_dados_apoio()
@@ -240,7 +243,7 @@ def agenda_diaria():
             agendamentos_map = { f"{doc.to_dict()['profissionalId']}_{doc.to_dict()['hora']}": {**doc.to_dict(), 'id': doc.id} for doc in agendamentos_query }
 
             # --- LÓGICA PARA ATUALIZAR STATUS PARA "FALTOU" ---
-            agora = datetime.now()
+            agora = datetime.now(TZ_SAO_PAULO)
             for agendamento in list(agendamentos_map.values()):
                 if agendamento.get('status') == 'agendado':
                     try:
