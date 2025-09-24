@@ -248,9 +248,13 @@ def agenda_diaria():
                 if agendamento.get('status') == 'agendado':
                     try:
                         horario_agendamento_str = f"{agendamento['dia']} {agendamento['hora']}"
-                        horario_agendamento = datetime.strptime(horario_agendamento_str, '%Y-%m-%d %H:%M')
+                        # Cria um objeto de horário "ingênuo" (sem fuso)
+                        horario_agendamento_naive = datetime.strptime(horario_agendamento_str, '%Y-%m-%d %H:%M')
+                        # TRANSFORMA o horário do agendamento em um objeto "consciente" do fuso de SP
+                        horario_agendamento_aware = horario_agendamento_naive.replace(tzinfo=TZ_SAO_PAULO)
 
-                        if agora > (horario_agendamento + timedelta(hours=1)):
+                        # Agora a comparação é justa: dois horários no mesmo fuso
+                        if agora > (horario_agendamento_aware + timedelta(hours=1)):
                             agendamento_id = agendamento['id']
                             db.collection('agendas').document(agendamento_id).update({'status': 'faltou'})
                             agendamento['status'] = 'faltou' # Atualiza localmente
@@ -281,8 +285,12 @@ def agenda_diaria():
                     
                     # --- NOVO: LÓGICA PARA BLOQUEAR SLOTS VAGOS NO PASSADO ---
                     if slot_info['status'] == 'vago':
-                        horario_do_slot = datetime.strptime(f"{data_str} {hora_str}", '%Y-%m-%d %H:%M')
-                        if horario_do_slot < agora:
+                        # Transforma o horário do slot em um objeto "consciente" do fuso de SP
+                        horario_do_slot_naive = datetime.strptime(f"{data_str} {hora_str}", '%Y-%m-%d %H:%M')
+                        horario_do_slot_aware = horario_do_slot_naive.replace(tzinfo=TZ_SAO_PAULO)
+                        
+                        # Compara com o "agora" que também já está no fuso de SP
+                        if horario_do_slot_aware < agora:
                             slot_info['status'] = 'bloqueado'
                     # --- FIM DA LÓGICA DE BLOQUEIO ---
 
