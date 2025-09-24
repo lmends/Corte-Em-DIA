@@ -173,14 +173,72 @@ body {
 
 
 
-/* Responsividade */
+/* --- Tablet e Telas Menores (abaixo de 1200px) --- */
 @media (max-width: 1200px) {
     .dashboard-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* O grid principal vira uma coluna só */
+    }
+
+    .content {
+        /* Reduz um pouco o espaçamento lateral em telas médias */
+        padding-left: 2rem;
+        padding-right: 2rem;
     }
 }
+
+
+/* --- Apenas Celulares (abaixo de 768px) --- */
 @media (max-width: 768px) {
+    body {
+        /* Em celulares, a sidebar some, então o body não precisa mais ser flex */
+        display: block; 
+    }
+
     .content {
-        margin-left: 0; /* Para quando a sidebar for escondida em telas menores */
+        margin-left: 0; /* Remove o espaço da sidebar */
+        padding: 1.5rem 1rem; /* Reduz drasticamente o espaçamento para ganhar tela */
+    }
+
+    .content h1 {
+        font-size: 1.8rem; /* Diminui o título principal */
+    }
+
+    /* --- Ajustes nos Cards de KPI --- */
+    .kpi-grid {
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .card-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
+
+    .card-valor {
+        font-size: 1.75rem; /* Diminui o valor do card */
+    }
+
+    /* --- Ajustes no Grid Principal --- */
+    .dashboard-grid {
+        gap: 1.5rem;
+    }
+
+    .chart-container, .table-container {
+        padding: 1rem 1.25rem; /* Menos padding nos cards de gráfico/tabela */
+    }
+
+    .chart-container h3, .table-container h3 {
+        font-size: 1.1rem; /* Diminui os subtítulos */
+        margin-bottom: 1rem;
+    }
+
+    .tabela-desempenho th, .tabela-desempenho td {
+        padding: 0.75rem; /* Menos padding na tabela */
     }
 }
