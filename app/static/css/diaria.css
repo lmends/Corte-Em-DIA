@@ -215,15 +215,14 @@ tbody tr:hover { background-color: #f1f3f5; }
 .status-bloqueado  { background-color: #95a5a6; } /* Cinza */
 
 /* Efeito sutil para linhas bloqueadas e de falta */
-tr.status-bloqueado,
-tr.status-faltou {
+tr.status-bloqueado {
     background-color: #f7f7f7;
     color: #aaa;
 }
 
 /* Remove a cor do texto forte em horários passados */
 tr.status-bloqueado td strong,
-tr.status-faltou td strong {
+td strong {
     color: #aaa;
 }
 
@@ -404,6 +403,12 @@ tr.status-faltou td strong {
 /* Efeito sutil para a linha da tabela que foi recebida */
 tr.status-recebido {
     background-color: #ecf7ed; /* Um lilás bem claro */
+    /* Deixa o texto em negrito para destacar */
+    font-weight: 500;
+}
+
+tr.status-faltou {
+    background-color: #f7edec; /* Um lilás bem claro */
     /* Deixa o texto em negrito para destacar */
     font-weight: 500;
 }

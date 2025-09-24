@@ -72,11 +72,6 @@ def index():
 @agenda_bp.route('/painel')
 @login_required
 def painel():
-    # --- CÓDIGO DE DEBUG ---
-    print("\n--- DEBUG: DADOS DO USUÁRIO LOGADO ---")
-    # A função vars() mostra todos os atributos de um objeto em um dicionário
-    print(f"Atributos do Objeto current_user: {vars(current_user)}")
-    print("--- FIM DO DEBUG ---\n")
 
     try:
         # 1. PEGAR DADOS ESSENCIAIS: UNIDADE E DATAS
